@@ -1,0 +1,65 @@
+import { useNavigate } from "react-router-dom";
+import Button from "../../components/ui/Button";
+import successImage from "../../assets/success-image.svg";
+
+const RegistrationSuccess = () => {
+  const navigate = useNavigate();
+
+  const handleClose = () => {
+    // Navigate to login or dashboard after successful registration
+    navigate("/login");
+  };
+
+  return (
+    <div 
+      className="fixed inset-0 flex items-center justify-center p-4 z-50 backdrop-blur-sm"
+      style={{ backgroundColor: 'rgba(255, 255, 255, 0.12)' }}
+    >
+      <div className="bg-white rounded-lg max-w-md w-full p-8 text-center border border-gray-200 shadow-2xl backdrop-blur-sm">
+        {/* Illustration Section */}
+        <div className="mb-6 flex items-center justify-center">
+          <img
+            src={successImage}
+            alt="Operation Successful"
+            className="w-full h-auto max-h-64 object-contain"
+          />
+        </div>
+
+        {/* Text Content */}
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-gray-800 mb-3">
+            Operation Successful
+          </h2>
+          <p className="text-gray-600 text-sm">
+            Lorem ipsum dolor sit amet consectetur. In non varius leo venenatis.
+            Ultrices ut.
+          </p>
+        </div>
+
+        {/* Close Button */}
+        <Button
+          onClick={handleClose}
+          className="w-full py-3 text-base border-2 transition-all"
+          style={{
+            backgroundColor: "transparent",
+            borderColor: "var(--color-secondary)",
+            color: "var(--color-secondary)",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = "var(--color-secondary)";
+            e.currentTarget.style.color = "white";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = "transparent";
+            e.currentTarget.style.color = "var(--color-secondary)";
+          }}
+        >
+          Close
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+export default RegistrationSuccess;
+

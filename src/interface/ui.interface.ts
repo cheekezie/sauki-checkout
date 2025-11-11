@@ -176,6 +176,7 @@ export interface AuthLayoutProps {
   children: ReactNode;
   rightMaxWidth?: string;
   showBackAboveLogo?: boolean;
+  showLogo?: boolean;
 }
 
 export interface ProtectedRouteProps {

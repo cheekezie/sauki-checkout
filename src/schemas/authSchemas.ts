@@ -203,10 +203,10 @@ export const pinSchema = Joi.string()
 
 // Password schema
 export const passwordSchema = Joi.string()
-  .min(8)
+  .min(10)
   .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/)
   .messages({
-    'string.min': 'Password must be at least 8 characters',
+    'string.min': 'Password must be at least 10 characters',
     'string.pattern.base': 'Password must contain uppercase, lowercase, number, and special character',
     'string.empty': 'Password is required',
     'any.required': 'Password is required'

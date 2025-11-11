@@ -28,6 +28,9 @@ const CreatePin = React.lazy(() => import("./pages/auth/CreatePin"));
 const Verification = React.lazy(() => import("./pages/auth/Verification"));
 
 const AccountTypeSelection = React.lazy(() => import("./pages/onboarding/AccountTypeSelection"));
+const RegisterAccount = React.lazy(() => import("./pages/onboarding/RegisterAccount"));
+const CreatePassword = React.lazy(() => import("./pages/onboarding/CreatePassword"));
+const RegistrationSuccess = React.lazy(() => import("./pages/onboarding/RegistrationSuccess"));
 const SchoolTypeSelection = React.lazy(() => import("./pages/onboarding/SchoolTypeSelection"));
 const SchoolSelection = React.lazy(() => import("./pages/onboarding/SchoolSelection"));
 const PortalMembership = React.lazy(() => import("./pages/onboarding/PortalMembership"));
@@ -98,6 +101,18 @@ function App() {
                           <Route
                             path="/register"
                             element={<LazyRoute><AccountTypeSelection /></LazyRoute>}
+                          />
+                          <Route
+                            path="/register-account"
+                            element={<LazyRoute><RegisterAccount /></LazyRoute>}
+                          />
+                          <Route
+                            path="/create-password"
+                            element={<LazyRoute><CreatePassword /></LazyRoute>}
+                          />
+                          <Route
+                            path="/registration-success"
+                            element={<LazyRoute><RegistrationSuccess /></LazyRoute>}
                           />
                           <Route
                             path="/school-type"
