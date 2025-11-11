@@ -17,6 +17,7 @@ export interface InputProps {
   error?: string;
   helperText?: string;
   className?: string;
+  inputClassName?: string;
 }
 
 // Textarea Component

@@ -17,6 +17,7 @@ const Input = ({
   error,
   helperText,
   className = "",
+  inputClassName = "",
 }: InputProps) => {
   const [isFocused, setIsFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -96,6 +97,7 @@ const Input = ({
                 : "border-gray-300"
             }
             ${disabled ? "bg-gray-50 cursor-not-allowed" : "bg-white"}
+            ${inputClassName}
           `}
         />
 

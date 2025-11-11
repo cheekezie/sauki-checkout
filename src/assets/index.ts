@@ -1,6 +1,6 @@
-import LogoIcon from '../assets/logo-icon.png';
+import LogoIcon from '../assets/logo-icon.svg';
 import LogoDark from '../assets/logo-dark.svg';
-import FeesLogo from '../assets/feesLogo.svg';
+import LogoLight from "../assets/logo-light.svg";
 
-// Keep backward-compatible exports but prefer FeesLogo
-export { FeesLogo, LogoDark, LogoIcon };
+// Keep backward-compatible exports but prefer LogoLight
+export { LogoLight, LogoDark, LogoIcon };

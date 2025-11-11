@@ -101,9 +101,63 @@ export const schoolRegistrationSchema = Joi.object({
   termsAccepted: termsSchema.required()
 });
 
+// Email or phone number validation (accepts both)
+export const emailOrPhoneSchema = Joi.string()
+  .custom((value, helpers) => {
+    if (!value) {
+      return helpers.error('string.empty');
+    }
+    
+    // Check if it's an email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (emailRegex.test(value)) {
+      return value;
+    }
+    
+    // Check if it's a phone number
+    const digits = value.replace(/\D/g, '');
+    
+    if (digits.length === 0) {
+      return helpers.error('string.empty');
+    }
+    
+    if (digits.length < 11) {
+      return helpers.error('string.tooShort');
+    }
+    
+    if (digits.length > 11) {
+      return helpers.error('string.tooLong');
+    }
+    
+    if (!digits.startsWith('0')) {
+      return helpers.error('string.invalidPrefix');
+    }
+    
+    const secondDigit = digits[1];
+    if (!['7', '8', '9'].includes(secondDigit)) {
+      return helpers.error('string.invalidSecondDigit');
+    }
+    
+    const thirdDigit = digits[2];
+    if (!['0', '1'].includes(thirdDigit)) {
+      return helpers.error('string.invalidThirdDigit');
+    }
+    
+    return value;
+  })
+  .messages({
+    'string.empty': 'Email or phone number is required',
+    'string.tooShort': 'Phone number must be exactly 11 digits',
+    'string.tooLong': 'Phone number must be exactly 11 digits',
+    'string.invalidPrefix': 'Phone number must start with 0',
+    'string.invalidSecondDigit': 'Invalid phone number format (second digit should be 7, 8, or 9)',
+    'string.invalidThirdDigit': 'Invalid phone number format (third digit should be 0 or 1)',
+    'any.required': 'Email or phone number is required'
+  });
+
 // Login schema
 export const loginSchema = Joi.object({
-  phoneNumber: phoneSchema.required(),
+  phoneNumber: emailOrPhoneSchema.required(),
   password: Joi.string()
     .pattern(/^\d{6}$/)
     .messages({

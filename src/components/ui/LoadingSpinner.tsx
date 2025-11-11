@@ -18,7 +18,7 @@ export function ComponentLoading({ size = 'md', className = '', fullScreen = fal
   return (
     <div className={`${containerClasses} ${className}`}>
       <div
-        className={`${sizeClasses[size]} border-4 border-pink-200 border-t-pink-500 rounded-full animate-spin`}
+        className={`${sizeClasses[size]} border-4 border-primary/20 border-t-primary rounded-full animate-spin`}
         role="status"
         aria-label="Loading"
       >
@@ -32,7 +32,7 @@ export function PageLoading() {
   return (
     <div className="fixed inset-0 flex items-center justify-center w-full h-full bg-gray-50">
       <div
-        className="w-12 h-12 border-4 border-pink-200 border-t-pink-500 rounded-full animate-spin"
+        className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"
         role="status"
         aria-label="Loading"
       >
