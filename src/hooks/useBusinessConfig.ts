@@ -9,7 +9,7 @@ interface BusinessConfig {
   id: string;
   name: string;
   settings: {
-    [key: string]: any;
+    [key: string]: unknown;
   };
   // Add more fields as needed
 }
@@ -21,9 +21,9 @@ const COOKIE_EXPIRY_DAYS = 14;
  * Example service function - replace with your actual service
  * This demonstrates the pattern for creating optimized hooks with cookie caching
  */
-async function fetchBusinessConfig(hostname: string): Promise<BusinessConfig> {
+async function fetchBusinessConfig(_hostname: string): Promise<BusinessConfig> {
   // Replace with your actual API call
-  // const response = await BusinessConfigService.getConfig(hostname);
+  // const response = await BusinessConfigService.getConfig(_hostname);
   // return response.data;
   
   // Placeholder return

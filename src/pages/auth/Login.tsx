@@ -99,7 +99,7 @@ const Login = () => {
 					placeholder='Email or phone number'
 					required
 					error={errors.phoneNumber}
-					inputClassName='text-right'
+					inputClassName='placeholder:text-right'
 				/>
 
 				<Input
@@ -130,7 +130,19 @@ const Login = () => {
 				<Button
 					type='submit'
 					disabled={!canSubmit || state.isLoading}
-					className='py-4 text-base w-full'>
+					className='py-4 text-base w-full'
+					style={{
+						backgroundColor: 'var(--color-secondary)',
+						color: 'white',
+					}}
+					onMouseEnter={(e) => {
+						e.currentTarget.style.backgroundColor = 'var(--color-secondary)';
+						e.currentTarget.style.opacity = '0.9';
+					}}
+					onMouseLeave={(e) => {
+						e.currentTarget.style.backgroundColor = 'var(--color-secondary)';
+						e.currentTarget.style.opacity = '1';
+					}}>
 					{state.isLoading ? "Logging in..." : "Login"}
 				</Button>
 			</form>

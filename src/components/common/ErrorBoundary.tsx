@@ -1,5 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { logger } from '../../services/logger.service';
+import type { ApiError } from '../../types/error.types';
 
 interface Props {
   children: ReactNode;
@@ -52,12 +53,13 @@ export class ErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Use specialized logging for API-related errors
     if (isApiError(error)) {
+      const apiError = error as unknown as ApiError;
       logger.apiError('ErrorBoundary', 'RENDER', {
         message: error.message,
         stack: error.stack,
         componentStack: errorInfo.componentStack,
-        status: (error as any).status,
-        statusCode: (error as any).statusCode,
+        status: apiError.status,
+        statusCode: apiError.statusCode,
       });
     } else {
       // Use general error logging for other errors
@@ -134,10 +136,10 @@ export class ErrorBoundary extends Component<Props, State> {
               <p>
                 If this problem persists, please contact our support team at{' '}
                 <a
-                  href="mailto:support@fees.ng"
+                  href="mailto:support@saukipay.com"
                   className="text-primary hover:underline cursor-pointer"
                 >
-                  support@fees.ng
+                  support@saukipay.com
                 </a>
               </p>
             </div>

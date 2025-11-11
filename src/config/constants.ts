@@ -31,7 +31,7 @@ export const COOKIE_NAMES = {
 
 // App Configuration
 export const APP_CONFIG = {
-  NAME: 'Fees Admin Portal',
+  NAME: 'SaukiPay',
   VERSION: '1.0.0',
   DEFAULT_LOCALE: 'en-US',
 } as const;

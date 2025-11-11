@@ -13,6 +13,7 @@ interface prop {
 const Header = ({ onSidebarCollapse, onMobileMenu }: prop) => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [isProfileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [isLiveMode, setIsLiveMode] = useState(true); // true for live, false for demo
 
   const triggerRef = useRef<HTMLButtonElement>(null);
   const profileTriggerRef = useRef<HTMLButtonElement>(null);
@@ -49,7 +50,7 @@ const Header = ({ onSidebarCollapse, onMobileMenu }: prop) => {
               className="flex bg-white items-center rounded-md p-2.5 w-[200px] justify-between cursor-pointer"
             >
               <p className="text-slate-600 truncate max-w-[300px] text-sm">
-                {organizationName || "Select organization"}
+                7Central Inc. Abuja, NG
               </p>
               <div className="ml-2">
                 <ChevronDown
@@ -72,6 +73,35 @@ const Header = ({ onSidebarCollapse, onMobileMenu }: prop) => {
 
         {/* Right section */}
         <div className="flex items-center space-x-3">
+          {/* LIVE-DEMO SWITCH */}
+          <div className="hidden lg:flex items-center gap-2">
+            <span className={`text-xs font-medium transition-colors ${
+              !isLiveMode ? "text-slate-600" : "text-slate-400"
+            }`}>
+              Demo
+            </span>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={isLiveMode}
+              onClick={() => setIsLiveMode(!isLiveMode)}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
+                isLiveMode ? "bg-secondary" : "bg-gray-300"
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  isLiveMode ? "translate-x-6" : "translate-x-1"
+                }`}
+              />
+            </button>
+            <span className={`text-xs font-medium transition-colors ${
+              isLiveMode ? "text-slate-600" : "text-slate-400"
+            }`}>
+              Live
+            </span>
+          </div>
+
           {/* Notification Bell - Secondary Color */}
           <button className="p-2.5 rounded-xl text-secondary hover:bg-slate-100 transition-colors cursor-pointer">
             <Bell className="w-5 h-5" />

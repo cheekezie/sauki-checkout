@@ -178,12 +178,22 @@ const SwitchBusiness = ({ onClose }: prop) => {
       <div className="max-h-72 overflow-y-auto">
         {isOnlyOrgCurrent ? (
           <div className="px-4 py-3 text-sm text-slate-500">
-            You only have access to this organization
+            You only have access to this Business
           </div>
         ) : otherOrganizations.length === 0 ? (
-          <div className="px-4 py-3 text-sm text-slate-500">
-            No other organizations available
-          </div>
+          canAddOrganization ? (
+            <button
+              onClick={onAddBusiness}
+              className="flex items-center justify-center gap-2 w-full px-4 py-3 text-sm font-medium text-blue-600 hover:bg-blue-50"
+            >
+              <Plus className="w-4 h-4" />
+              Add Business
+            </button>
+          ) : (
+            <div className="px-4 py-3 text-sm text-slate-500">
+              No other businesses available
+            </div>
+          )
         ) : null}
         {otherOrganizations.map((org) => {
           const isActive = org?._id === currentOrgId;
@@ -255,14 +265,14 @@ const SwitchBusiness = ({ onClose }: prop) => {
       </div>
 
       {/* ➕ Add new - Only show if user has permission */}
-      {canAddOrganization && (
+      {canAddOrganization && otherOrganizations.length > 0 && (
         <div className="border-t border-slate-200">
           <button
             onClick={onAddBusiness}
             className="flex items-center justify-center gap-2 w-full py-3 text-sm font-medium text-blue-600 hover:bg-blue-50"
           >
             <Plus className="w-4 h-4" />
-            Add Organization
+            Add Business
           </button>
         </div>
       )}

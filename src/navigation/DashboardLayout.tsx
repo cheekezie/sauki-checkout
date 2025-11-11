@@ -28,7 +28,7 @@ export default function DashboardLayout() {
           currentPage={currentPage}
           onPageChanged={setCurrentPage}
         />
-        <div className="flex-1 flex flex-col overflow-hidden rounded-tl-3xl rounded-bl-3xl bg-secondary/5 backdrop-blur-sm">
+        <div className="flex-1 flex flex-col overflow-hidden bg-secondary/5 backdrop-blur-sm">
           <Header
             sideBarCollapsed={sideBarCollapsed}
             onMobileMenu={() => setIsMobileOpen(true)}

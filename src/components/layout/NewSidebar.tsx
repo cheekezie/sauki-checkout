@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import logoLight from "../../assets/logo-light.svg";
+import LogoIcon from "../../assets/logo-icon.svg";
 import {
   LayoutDashboard,
   Package,
@@ -158,7 +159,7 @@ const NewSidebar = ({
 
               {/* Logo */}
               <div className="p-6 border-b border-slate-200/50">
-                <img src={logoLight} alt="SaukiPAY" className="h-12 w-auto" />
+                <img src={logoLight} alt="SaukiPay" className="h-12 w-auto" />
               </div>
 
               {/* Navigation */}
@@ -196,17 +197,23 @@ const NewSidebar = ({
         {/* Logo */}
         <div
           className={`${
-            collapsed ? "p-4" : "p-6"
+            collapsed ? "p-4" : "p-4"
           } border-b border-slate-200/50`}
         >
           <div className="flex items-center justify-center">
-            <img
-              src={logoLight}
-              alt="SaukiPAY"
-              className={`w-auto transition-all duration-300 ${
-                collapsed ? "h-10 opacity-100" : "h-12 opacity-100"
-              }`}
-            />
+            {collapsed ? (
+              <img
+                src={LogoIcon}
+                alt="SaukiPay"
+                className="w-auto h-10 transition-all duration-300"
+              />
+            ) : (
+              <img
+                src={logoLight}
+                alt="SaukiPay"
+                className="w-auto h-12 transition-all duration-300"
+              />
+            )}
           </div>
         </div>
 

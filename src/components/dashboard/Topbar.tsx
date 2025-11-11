@@ -8,7 +8,7 @@ interface TopbarProps {
 }
 
 const Topbar = ({
-  title = "Fees Admin Portal",
+  title = "Saukipay",
   activeTab = "overview",
   onTabChange,
 }: TopbarProps) => {

@@ -43,7 +43,7 @@ const Auth = () => {
     <>
       <div className="mb-12">
         <h1 className="text-4xl font-bold mb-4 text-foreground leading-tight">
-          Welcome to Fees.ng admin Portal,
+          Welcome to SaukiPay,
           <br />
           unlock new experiences.
         </h1>

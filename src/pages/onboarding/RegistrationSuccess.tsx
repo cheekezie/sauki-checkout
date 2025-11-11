@@ -39,19 +39,18 @@ const RegistrationSuccess = () => {
         {/* Close Button */}
         <Button
           onClick={handleClose}
-          className="w-full py-3 text-base border-2 transition-all"
+          className="w-full py-3 text-base"
           style={{
-            backgroundColor: "transparent",
-            borderColor: "var(--color-secondary)",
-            color: "var(--color-secondary)",
+            backgroundColor: "var(--color-secondary)",
+            color: "white",
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.backgroundColor = "var(--color-secondary)";
-            e.currentTarget.style.color = "white";
+            e.currentTarget.style.opacity = "0.9";
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = "transparent";
-            e.currentTarget.style.color = "var(--color-secondary)";
+            e.currentTarget.style.backgroundColor = "var(--color-secondary)";
+            e.currentTarget.style.opacity = "1";
           }}
         >
           Close
