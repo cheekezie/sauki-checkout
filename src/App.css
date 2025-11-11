@@ -1,0 +1,121 @@
+@import "tailwindcss";
+
+/* 
+ * Suppress CSS validation warnings for Tailwind CSS v4 directives
+ * @theme is a valid Tailwind CSS v4 at-rule
+ */
+/* stylelint-disable-next-line at-rule-no-unknown */
+/* @suppress */
+@theme {
+  --color-primary: #FFD47D;
+  --color-secondary: #144049;
+  --color-bg: #ffffff;
+  --color-text: #0f172a;
+  --color-dark: #505050;
+  --color-off-white: #f7fafb;
+  
+  --font-family-sans: "Sora", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Fallback CSS custom properties for compatibility */
+:root {
+  --color-primary: #FFD47D;
+  --color-secondary: #144049;
+  --color-bg: #ffffff;
+  --color-text: #0f172a;
+  --color-dark: #505050;
+  --color-off-white: #f7fafb;
+}
+
+/* Optional: Dark theme */
+[data-theme='dark'] {
+  --color-primary: #93c5fd; /* Blue-300 */
+  --color-secondary: #f97316; /* Orange-500 */
+  --color-bg: #0f172a;
+  --color-text: #ffffff;
+}
+
+/* Sora Font Family Declarations */
+@font-face {
+  font-family: 'Sora';
+  src: url('./assets/fonts/Sora-Thin.ttf') format('truetype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Sora';
+  src: url('./assets/fonts/Sora-ExtraLight.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Sora';
+  src: url('./assets/fonts/Sora-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Sora';
+  src: url('./assets/fonts/Sora-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Sora';
+  src: url('./assets/fonts/Sora-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Sora';
+  src: url('./assets/fonts/Sora-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Sora';
+  src: url('./assets/fonts/Sora-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Sora';
+  src: url('./assets/fonts/Sora-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Apply Sora font globally */
+body {
+  font-family: 'Sora', sans-serif;
+  text-size-adjust: 100%;
+}
+
+/* Filter Modal Slide-in Animation */
+@keyframes slide-in-from-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-in.slide-in-from-right {
+  animation: slide-in-from-right 0.3s ease-out;
+}
