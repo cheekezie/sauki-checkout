@@ -51,7 +51,6 @@ const CreateGroupModal = ({
     formData,
     errors,
     updateField,
-    validateForm,
     setFormData,
     clearErrors,
   } = useFormValidation({
@@ -95,11 +94,9 @@ const CreateGroupModal = ({
       if (response && response.data && Array.isArray(response.data)) {
         setBanks(response.data);
       } else {
-        console.error("Invalid bank list response format:", response);
         setBanks([]);
       }
     } catch (error) {
-      console.error("Failed to fetch banks:", error);
       setBanks([]);
     } finally {
       setIsLoadingBanks(false);
@@ -107,11 +104,12 @@ const CreateGroupModal = ({
   };
 
   const handleVerifyAccount = async () => {
+    const accountNumber = formData.accountNumber as string;
     if (
       !formData.bankCode ||
-      !formData.accountNumber ||
-      formData.accountNumber.length !== 10 ||
-      !/^\d{10}$/.test(formData.accountNumber)
+      !accountNumber ||
+      accountNumber.length !== 10 ||
+      !/^\d{10}$/.test(accountNumber)
     ) {
       return;
     }
@@ -142,7 +140,6 @@ const CreateGroupModal = ({
         error?.response?.data?.message ||
         "Failed to verify account. Please enter the account name manually.";
       showError("Verification Failed", errorMessage);
-      console.error("Failed to verify account:", error);
     } finally {
       setIsVerifyingAccount(false);
     }
@@ -187,14 +184,15 @@ const CreateGroupModal = ({
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
+      const managePayment = formData.managePayment as boolean;
       await onSave({
         name: formData.name as string,
         organizationType: formData.organizationType as string,
         email: formData.email as string,
         phone: formData.phone as string,
         description: formData.description as string,
-        managePayment: formData.managePayment as boolean,
-        ...(formData.managePayment && {
+        managePayment,
+        ...(managePayment && {
           bankCode: formData.bankCode as string,
           accountNumber: formData.accountNumber as string,
           accountName: formData.accountName as string,
@@ -202,7 +200,6 @@ const CreateGroupModal = ({
       });
       onClose();
     } catch (error) {
-      console.error("Failed to create group:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -332,8 +329,6 @@ const CreateGroupModal = ({
                   value={formData.description as string}
                   onChange={(value) => updateField("description", value)}
                   placeholder="Description"
-                  multiline
-                  rows={3}
                 />
               </div>
             )}

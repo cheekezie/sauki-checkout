@@ -49,7 +49,6 @@ const PhoneVerification = () => {
 
     try {
       await verifyPhone(phoneNumber, otpValue);
-      // console.log("OTP Verification Response:", response);
       showSuccess(
         "Phone Verified",
         "Your phone number has been successfully verified!"
@@ -61,7 +60,6 @@ const PhoneVerification = () => {
         },
       });
     } catch (error: any) {
-      // console.error("Phone verification failed:", error);
       showError(
         "Verification Failed",
         error.message ||
@@ -87,14 +85,11 @@ const PhoneVerification = () => {
 
     try {
       await resendPhoneOTP(phoneNumber);
-      // console.log("Resend OTP Response:", response);
       showInfo(
         "OTP Sent",
         "A new verification code has been sent to your phone."
       );
     } catch (error) {
-      // console.error("Resend OTP failed:", error);
-
       if (
         error instanceof Error &&
         error.message?.includes("Route Not Found")

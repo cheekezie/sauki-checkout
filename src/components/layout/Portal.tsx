@@ -1,5 +1,5 @@
 import { createPortal } from 'react-dom';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { PortalProps } from "../../interface";
 
 export const Portal = ({ children }: PortalProps) => {

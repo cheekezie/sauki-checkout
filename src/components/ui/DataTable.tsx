@@ -581,7 +581,7 @@ const DataTable = <T extends Record<string, unknown>>({
                           {loadingText}
                         </span>
                         <div
-                          className="w-12 h-12 border-4 border-pink-200 border-t-pink-500 rounded-full animate-spin"
+                          className="w-12 h-12 border-4 border-secondary/20 border-t-secondary rounded-full animate-spin"
                           role="status"
                           aria-label="Loading"
                         >
@@ -1071,7 +1071,7 @@ const ColumnManagerModal = ({
                 <Button
                   type="button"
                   onClick={handleApply}
-                  variant="primary"
+                  variant="secondary"
                   className="text-sm"
                 >
                   Apply Changes

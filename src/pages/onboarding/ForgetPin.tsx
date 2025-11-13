@@ -59,7 +59,6 @@ const ForgetPin = () => {
         },
       });
     } catch (error: any) {
-      // console.error("ForgetPin: forgetPin error:", error);
       setIsFormSubmitted(false);
       showError(
         "Request Failed",

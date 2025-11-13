@@ -33,7 +33,7 @@ const AddOrganizationModal: React.FC<AddOrganizationModalProps> = ({
   organization,
   mode,
 }) => {
-  const { showError, showSuccess } = useToast();
+  const { showError } = useToast();
   const updateOrganizationMutation = useUpdateOrganization();
   const [isSubmitting, setIsSubmitting] = useState(false);
   

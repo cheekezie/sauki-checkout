@@ -6,7 +6,7 @@ import type {
 import { useState } from "react";
 import { formatTableDate } from "@/utils/tableFormatters";
 
-interface TransactionData {
+interface TransactionData extends Record<string, unknown> {
   id: string;
   sn: number;
   student: string;
@@ -349,8 +349,7 @@ const Transactions = () => {
             setPageSize(newPageSize);
           }
         }}
-        onRowClick={(_row: TransactionData) => {
-          // console.log("Row clicked:", row);
+        onRowClick={(_row: TransactionData, _index: number) => {
         }}
         exportFileName="transactions"
         striped

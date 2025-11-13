@@ -21,7 +21,7 @@ const RegisterAccount = () => {
   const location = useLocation();
   const { businessType, category } = location.state || {};
 
-  const { formData, errors, updateFieldWithValidation } =
+  const { formData, errors, updateField } =
     useFormValidation({
       country: "",
       businessName: "",
@@ -74,7 +74,7 @@ const RegisterAccount = () => {
             name="country"
             value={formData.country as string}
             onChange={(value) =>
-              updateFieldWithValidation("country", value, {} as any)
+              updateField("country", value)
             }
             options={countryOptions}
             placeholder="-- Please select --"
@@ -90,7 +90,7 @@ const RegisterAccount = () => {
             type="text"
             value={formData.businessName as string}
             onChange={(value) =>
-              updateFieldWithValidation("businessName", value, {} as any)
+              updateField("businessName", value)
             }
             placeholder="e.g Jasiri Tech Nigeria Ltd"
             icon={Building}
@@ -104,7 +104,7 @@ const RegisterAccount = () => {
             type="text"
             value={formData.firstName as string}
             onChange={(value) =>
-              updateFieldWithValidation("firstName", value, {} as any)
+              updateField("firstName", value)
             }
             placeholder="e.g. Sharafadeen"
             required
@@ -118,7 +118,7 @@ const RegisterAccount = () => {
             type="text"
             value={formData.lastName as string}
             onChange={(value) =>
-              updateFieldWithValidation("lastName", value, {} as any)
+              updateField("lastName", value)
             }
             placeholder="e.g. Mubarak"
             error={errors.lastName}
@@ -131,7 +131,7 @@ const RegisterAccount = () => {
             type="email"
             value={formData.email as string}
             onChange={(value) =>
-              updateFieldWithValidation("email", value, {} as any)
+              updateField("email", value)
             }
             placeholder="user@email.com"
             icon={Mail}
@@ -145,7 +145,7 @@ const RegisterAccount = () => {
             type="tel"
             value={formData.phoneNumber as string}
             onChange={(value) =>
-              updateFieldWithValidation("phoneNumber", value, {} as any)
+              updateField("phoneNumber", value)
             }
             placeholder="+234"
             icon={Phone}

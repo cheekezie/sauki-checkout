@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import DataTable from "../../components/ui/DataTable";
 import type { DataTableColumn } from "../../interface/ui.interface";
 
-interface PaymentData {
+interface PaymentData extends Record<string, unknown> {
   id: string;
   sn: number;
   amount: string;

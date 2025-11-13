@@ -8,7 +8,7 @@ interface TopbarProps {
 }
 
 const Topbar = ({
-  title = "Saukipay",
+  title = "SaukiPay",
   activeTab = "overview",
   onTabChange,
 }: TopbarProps) => {

@@ -57,7 +57,6 @@ const SetPassPin = () => {
       );
       navigate("/login");
     } catch (error: any) {
-      // console.error("PIN setting failed:", error);
       showError(
         "PIN Setting Failed",
         error.message || "Failed to set PIN. Please try again."

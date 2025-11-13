@@ -19,7 +19,6 @@ class AuthService {
     };
     
         const response = await RequestService.post<StartLoginResI>(AuthEndpoints.loginStepOne, requestData);
-        // console.log("🔐 Login API Response:", response);
     
     // Extract the actual data from the nested response
     const responseData = response.data || response;
@@ -249,7 +248,6 @@ class AuthService {
     };
     
         const response = await RequestService.post(AuthEndpoints.sendAdminOTP, requestData);
-        // console.log("📤 Send Admin OTP Response:", response);
     return response;
   }
 
@@ -261,7 +259,6 @@ class AuthService {
     };
     
         const response = await RequestService.post(AuthEndpoints.verifyAdminOTP, requestData);
-        // console.log("✅ Verify Admin OTP Response:", response);
     return response;
   }
 
@@ -273,7 +270,6 @@ class AuthService {
     };
     
         const response = await RequestService.post(AuthEndpoints.verifyPhone, requestData);
-        // console.log("📱 Verify Phone Response:", response);
     return response;
   }
 
@@ -284,7 +280,6 @@ class AuthService {
     };
     
         const response = await RequestService.post(AuthEndpoints.resendPhoneOTP, requestData);
-        // console.log("🔄 Resend Phone OTP Response:", response);
     return response;
   }
 
@@ -331,7 +326,6 @@ class AuthService {
     try {
       await RequestService.post(AuthEndpoints.logout, {});
     } catch (error) {
-      // console.warn('Logout API call failed:', error);
     } finally {
       RequestService.setToken(null);
     }

@@ -1,7 +1,7 @@
 import { RequestService } from './api/client';
 import { PaymentEndpoints } from './api/endpoints';
 import { logger } from './logger.service';
-import type { TransferListResponse, TransferType } from '@/interface/transfer.interface';
+import type { TransferListResponse } from '@/interface/transfer.interface';
 
 /**
  * Transfer Service
@@ -65,21 +65,13 @@ class TransferService {
     // For JSON responses, return parsed data
     const res = await RequestService.get<TransferListResponse>(url);
     
-    // Log the raw API response
     logger.debug('TransferService.getTransfersNew - Raw Response', res);
-    console.log('🟢 TransferService - Raw API Response:', res);
-    console.log('🟢 TransferService - Response Type:', typeof res);
-    console.log('🟢 TransferService - Has data property:', res && typeof res === 'object' && 'data' in res);
     
-    // Handle paginated response structure
     if (res && typeof res === 'object' && 'data' in res) {
       const transferResponse = res as TransferListResponse;
-      console.log('🟢 TransferService - Parsed Response:', transferResponse);
-      console.log('🟢 TransferService - Transfers Count:', transferResponse.data?.transfers?.length);
       return transferResponse;
     }
     
-    console.error('🔴 TransferService - Invalid response structure:', res);
     throw new Error('Invalid transfer list response');
   }
 

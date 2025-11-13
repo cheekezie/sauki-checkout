@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import TransferService from "@/services/transfer.service";
-import type { TransferListResponse, TransferType } from "@/interface/transfer.interface";
+import type { TransferListResponse } from "@/interface/transfer.interface";
 import { useOrg } from "@/hooks/useOrg";
 import { isUnauthorizedError } from "@/utils/errorHandler";
 
@@ -50,16 +50,6 @@ export function useTransfers(
         filterByOrganization: filterByOrganization,
         format: 'json',
       }) as TransferListResponse;
-      
-      // Log the API response for debugging
-      console.log('🔵 Transfers API Response:', response);
-      console.log('🔵 Transfers Data:', response?.data);
-      console.log('🔵 Transfers Array:', response?.data?.transfers);
-      console.log('🔵 Transfer Count:', response?.data?.transferCount);
-      console.log('🔵 Pagination:', {
-        page: response?.data?.page,
-        pages: response?.data?.pages,
-      });
       
       // Cache the full response
       queryClient.setQueryData(queryKey, response);

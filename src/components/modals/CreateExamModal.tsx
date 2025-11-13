@@ -384,7 +384,7 @@ const CreateExamModal = ({ isOpen, onClose, onSave }: CreateExamModalProps) => {
               <Button
                 type="button"
                 onClick={handleNext}
-                variant="primary"
+                variant="secondary"
                 size="sm"
                 fullWidth={false}
               >
@@ -394,7 +394,7 @@ const CreateExamModal = ({ isOpen, onClose, onSave }: CreateExamModalProps) => {
               <Button
                 type="button"
                 onClick={handleSubmit}
-                variant="primary"
+                variant="secondary"
                 size="sm"
                 fullWidth={false}
               >

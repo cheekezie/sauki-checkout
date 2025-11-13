@@ -122,7 +122,7 @@ const TermsAndConditions = () => {
 								</p>
 								<p>
 									Signup fee is paid to our account or by searching for us in the
-									saukipay.com payment list and completing the payment procedure. You can
+									saukipay.net payment list and completing the payment procedure. You can
 									cancel your account at any time, but you will remain liable for all
 									charges accrued up to that time.
 								</p>
@@ -195,7 +195,7 @@ const TermsAndConditions = () => {
 							</h2>
 							<div className='text-gray-700 leading-relaxed space-y-4'>
 								<p>
-									If any customer on the process of payment got debited but saukipay.com
+									If any customer on the process of payment got debited but saukipay.net
 									did not get the value, such customer has the duty of complaining to
 									their bank to push the payment to a complete or reversal to the
 									customers' account.
@@ -237,7 +237,7 @@ const TermsAndConditions = () => {
 								Last updated: {new Date().toLocaleDateString()}
 							</p>
 							<p className='text-primary font-semibold mt-2'>
-								saukipay.com - Preeminent MFB & Afriwice Global Limited
+								saukipay.net - Preeminent MFB & Afriwice Global Limited
 							</p>
 						</div>
 					</div>

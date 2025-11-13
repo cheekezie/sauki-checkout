@@ -94,7 +94,6 @@ const ResetPin = () => {
         });
       }
     } catch (error: any) {
-      // console.error("Reset PIN failed:", error);
       showError(
         "Reset Failed",
         error.message ||

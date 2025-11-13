@@ -9,7 +9,7 @@ import type { LatestTransaction } from "../../services/dashboard.service";
 import { formatCurrency } from "../../utils/formatCurrency";
 import { formatTableDate } from "@/utils/tableFormatters";
 
-interface RecentTransactionData {
+interface RecentTransactionData extends Record<string, unknown> {
   id: string;
   student: string;
   amount: string;
@@ -112,8 +112,6 @@ const RecentTransactions = ({ transactions = [] }: RecentTransactionsProps) => {
       title: "View Details",
       icon: TrendingUp,
       onClick: (_row) => {
-        // console.log("View transaction:", row);
-        // Navigate to transaction details
       },
     },
   ];
@@ -169,11 +167,9 @@ const RecentTransactions = ({ transactions = [] }: RecentTransactionsProps) => {
           selectedRowKeys: [],
           selectedRows: [],
           onChange: (_keys, _rows) => {
-            // console.log("Selected transactions:", keys, rows);
           },
         }}
         onRowClick={(_row) => {
-          // console.log("Row clicked:", row);
         }}
         striped
         hoverable

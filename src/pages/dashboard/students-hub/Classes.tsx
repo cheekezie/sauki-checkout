@@ -68,7 +68,7 @@ const Classes = () => {
       }
 
       const blob = await ClassService.exportClasses({
-        filteredByOrg: orgId,
+        filteredByOrg: orgId || undefined,
       });
 
       // Determine file extension based on format (backend may return different formats)

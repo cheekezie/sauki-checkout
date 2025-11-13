@@ -7,7 +7,7 @@ import { ComponentLoading } from "../../components/ui/LoadingSpinner";
 import { useDecodedAuth } from "../../hooks/useDecodedAuth";
 
 const Dashboard = () => {
-  const { role, isLoading: authLoading } = useDecodedAuth();
+  const { isLoading: authLoading } = useDecodedAuth();
 
   // Get current date range (last 30 days) and traffic session
   const today = new Date();

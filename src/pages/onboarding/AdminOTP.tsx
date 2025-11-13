@@ -49,7 +49,6 @@ const AdminOTP = () => {
       showSuccess("OTP Sent", "Verification code sent to your phone number.");
       navigate("/admin-verification", { state: { phoneNumber } });
     } catch (error: any) {
-      // console.error("OTP sending failed:", error);
       showError(
         "OTP Failed",
         error.message || state.error || "Failed to send OTP. Please try again."

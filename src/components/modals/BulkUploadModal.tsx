@@ -257,7 +257,7 @@ const BulkUploadModal = ({
             <Button
               type="button"
               onClick={handleSave}
-              variant="primary"
+              variant="secondary"
               size="sm"
               fullWidth={false}
             >

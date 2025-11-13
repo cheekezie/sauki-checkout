@@ -61,11 +61,9 @@ const AddSubAccountModal = ({ isOpen, onClose, onSave }: AddSubAccountModalProps
       if (response && response.data && Array.isArray(response.data)) {
         setBanks(response.data);
       } else {
-        console.error("Invalid bank list response format:", response);
         setBanks([]);
       }
     } catch (error) {
-      console.error("Failed to fetch banks:", error);
       setBanks([]);
     } finally {
       setIsLoadingBanks(false);
@@ -93,7 +91,6 @@ const AddSubAccountModal = ({ isOpen, onClose, onSave }: AddSubAccountModalProps
       clearErrors();
       onClose();
     } catch (error) {
-      console.error("Failed to save sub account:", error);
     } finally {
       setIsSaving(false);
     }

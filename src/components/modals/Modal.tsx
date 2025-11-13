@@ -263,7 +263,7 @@ const Modal = ({
                 <Button
                   type="button"
                   onClick={handleConfirm}
-                  variant="primary"
+                  variant="secondary"
                   size="sm"
                   fullWidth={false}
                 >

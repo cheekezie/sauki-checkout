@@ -177,15 +177,14 @@ const Students = () => {
   const { activeOrgId } = useOrg();
 
   // State for search and filters
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedClassId, setSelectedClassId] = useState<string | undefined>(
+  const [searchTerm] = useState("");
+  const [selectedClassId] = useState<string | undefined>(
     undefined
   );
 
   // Fetch students from API with pagination
   const {
     students = [], // Students array
-    pagination, // Pagination info
     isLoading,
     isError,
     refetch,
@@ -195,7 +194,7 @@ const Students = () => {
       // Don't pass pageNumber or pageSize - we fetch all students and paginate client-side
       search: searchTerm,
       filteredByClass: selectedClassId,
-      filteredByOrg: activeOrgId,
+      filteredByOrg: activeOrgId || undefined,
     },
     canReadStudents
   );
@@ -258,7 +257,7 @@ const Students = () => {
       const blob = await StudentService.exportStudents({
         search: searchTerm,
         filteredByClass: selectedClassId,
-        filteredByOrg: activeOrgId,
+        filteredByOrg: activeOrgId || undefined,
       });
 
       // Determine file extension based on format (backend may return different formats)

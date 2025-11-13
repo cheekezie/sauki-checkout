@@ -295,7 +295,7 @@ const AddResultModal = ({ isOpen, onClose, onSave }: AddResultModalProps) => {
           </h3>
           <Button
             type="button"
-            variant="primary"
+            variant="secondary"
             size="sm"
             fullWidth={false}
             className="flex items-center gap-2 w-auto"
@@ -431,7 +431,7 @@ const AddResultModal = ({ isOpen, onClose, onSave }: AddResultModalProps) => {
           </h3>
           <Button
             type="button"
-            variant="primary"
+            variant="secondary"
             size="sm"
             fullWidth={false}
             className="flex items-center gap-2 w-auto"
@@ -565,7 +565,7 @@ const AddResultModal = ({ isOpen, onClose, onSave }: AddResultModalProps) => {
               <Button
                 type="button"
                 onClick={handleNext}
-                variant="primary"
+                variant="secondary"
                 size="sm"
                 fullWidth={false}
                 className="flex items-center gap-2"
@@ -578,7 +578,7 @@ const AddResultModal = ({ isOpen, onClose, onSave }: AddResultModalProps) => {
               <Button
                 type="button"
                 onClick={handleSubmit}
-                variant="primary"
+                variant="secondary"
                 size="sm"
                 fullWidth={false}
                 className="flex items-center gap-2"

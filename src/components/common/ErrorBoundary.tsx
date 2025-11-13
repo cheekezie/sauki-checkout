@@ -136,10 +136,10 @@ export class ErrorBoundary extends Component<Props, State> {
               <p>
                 If this problem persists, please contact our support team at{' '}
                 <a
-                  href="mailto:support@saukipay.com"
+                  href="mailto:support@saukipay.net"
                   className="text-primary hover:underline cursor-pointer"
                 >
-                  support@saukipay.com
+                  support@saukipay.net
                 </a>
               </p>
             </div>

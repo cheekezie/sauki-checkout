@@ -18,7 +18,7 @@ const Header = ({ onSidebarCollapse, onMobileMenu }: prop) => {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const profileTriggerRef = useRef<HTMLButtonElement>(null);
 
-  const { user, organizationName } = useDecodedAuth();
+  const { user } = useDecodedAuth();
 
   return (
     <div className="bg-transparent border-b border-slate-200/50 px-4 sm:px-6 py-4">

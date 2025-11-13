@@ -2,7 +2,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import PaymentService, {
   type PaymentGatewayResponse,
   type SimulateTransferRequest,
-  type SimulateTransferResponse,
   type ProfitSharingAccountResponse,
   type CreateProfitSharingAccountRequest,
   type PricingResponse,
@@ -46,7 +45,6 @@ export function usePaymentGateways() {
  * @returns Mutation function to simulate transfer
  */
 export function useSimulateTransfer() {
-  const queryClient = useQueryClient();
   const { showSuccess, showError } = useToast();
 
   return useMutation({
@@ -78,8 +76,6 @@ export function useSimulateTransfer() {
  * @returns React Query result with profit sharing accounts data
  */
 export function useProfitSharingAccounts() {
-  const { showError } = useToast();
-
   return useQuery<ProfitSharingAccountResponse>({
     queryKey: ["profitSharingAccounts"],
     queryFn: async () => {
@@ -122,7 +118,7 @@ export function useAddProfitSharingAccount() {
       queryClient.invalidateQueries({ queryKey: ["profitSharingAccounts"] });
       showSuccess(
         "Account Added",
-        data.message || "Profit sharing account has been added successfully."
+        (data as any).message || "Profit sharing account has been added successfully."
       );
     },
     onError: (error: any) => {
@@ -184,7 +180,7 @@ export function usePricing(organizationId?: string) {
     queryKey: ["pricing", orgId],
     queryFn: async () => {
       try {
-        return await PaymentService.getPricing(orgId);
+        return await PaymentService.getPricing(orgId || undefined);
       } catch (error: any) {
         // Don't show toast for 401 errors - global handler will show it
         if (!isUnauthorizedError(error)) {
@@ -215,14 +211,14 @@ export function useUpdatePricing(organizationId?: string) {
 
   return useMutation({
     mutationFn: async (payload: UpdatePricingRequest) => {
-      return await PaymentService.updatePricing(payload, orgId);
+      return await PaymentService.updatePricing(payload, orgId || undefined);
     },
     onSuccess: (data) => {
       // Invalidate and refetch pricing
       queryClient.invalidateQueries({ queryKey: ["pricing", orgId] });
       showSuccess(
         "Pricing Updated",
-        data.message || "Pricing configuration has been updated successfully."
+        (data as any).message || "Pricing configuration has been updated successfully."
       );
     },
     onError: (error: any) => {

@@ -11,7 +11,6 @@ import type { OtherBankDetail } from "@/interface/organization.interface";
 import { useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 import AddSubAccountModal from "@/components/modals/AddSubAccountModal";
-import { useToast } from "@/hooks/useToast";
 import DashboardPageLayout from "@/components/layout/DashboardPageLayout";
 import Button from "@/components/ui/Button";
 
@@ -33,7 +32,6 @@ const SubAccount = () => {
     enabled: !authLoading && !isPortalAdmin,
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { showSuccess, showError } = useToast();
   const addBankDetailsMutation = useAddBankDetails();
 
   // Extract otherBankDetails from organization data

@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import DashboardService, { 
   type DashboardParams, 
-  type DashboardResponse 
+  type DashboardResponse,
+  type ChartData
 } from "@/services/dashboard.service";
 import { useToast } from "./useToast";
 import { isUnauthorizedError } from "@/utils/errorHandler";
@@ -36,7 +37,7 @@ export function useDashboard(params?: DashboardParams) {
               totalReceive: 0,
               totalStudents: 0,
               totalFees: 0,
-              chartData: [],
+              chartData: { labels: [], schoolFess: [], otherFees: [] } as ChartData,
               incomingTraffic: [],
               latestTransactions: [],
               latestInvoices: [],

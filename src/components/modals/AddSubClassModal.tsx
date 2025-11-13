@@ -101,7 +101,7 @@ const AddSubClassModal = ({
           <Button
             onClick={handleSave}
             disabled={isSubmitting || !subclassName.trim() || capacity <= 0}
-            variant="primary"
+            variant="secondary"
             size="sm"
             fullWidth={false}
           >

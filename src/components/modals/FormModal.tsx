@@ -1,10 +1,6 @@
 import { useEffect, type ReactNode } from "react";
 import { X } from "lucide-react";
 import { Portal } from "../layout/Portal";
-import Input from "../ui/Input";
-import Select from "../ui/Select";
-import Checkbox from "../ui/Checkbox";
-import { useForm } from "react-hook-form";
 import Button from "../ui/Button";
 
 interface FormModalProps {
@@ -140,7 +136,7 @@ const FormModal = ({
                 type="button"
                 onClick={handleSave}
                 disabled={saveDisabled}
-                variant="primary"
+                variant="secondary"
                 size="sm"
                 fullWidth={false}
               >

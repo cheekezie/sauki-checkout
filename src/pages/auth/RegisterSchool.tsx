@@ -55,14 +55,13 @@ const RegisterSchool = () => {
         "Registration Successful",
         "Please verify your phone number to complete registration."
       );
-      setPhoneNumber(formData.contactPhone);
+      setPhoneNumber(formData.contactPhone as string);
       setRegistrationData(registrationData);
       navigate("/phone-verification", {
         state: { phoneNumber: formData.contactPhone, registrationData },
         replace: true,
       });
     } catch (error: any) {
-      // console.error("Registration failed:", error);
       showError(
         "Registration Failed",
         error.message ||
@@ -91,7 +90,7 @@ const RegisterSchool = () => {
           label="School Name"
           name="schoolName"
           type="text"
-          value={formData.schoolName}
+          value={(formData.schoolName as string) || ""}
           onChange={(value) =>
             updateFieldWithValidation(
               "schoolName",
@@ -109,7 +108,7 @@ const RegisterSchool = () => {
           label="Phone Number"
           name="contactPhone"
           type="tel"
-          value={formData.contactPhone}
+          value={(formData.contactPhone as string) || ""}
           onChange={(value) =>
             updateFieldWithValidation(
               "contactPhone",
@@ -128,7 +127,7 @@ const RegisterSchool = () => {
           label="Email Address"
           name="contactEmail"
           type="email"
-          value={formData.contactEmail}
+          value={(formData.contactEmail as string) || ""}
           onChange={(value) =>
             updateFieldWithValidation(
               "contactEmail",
@@ -146,7 +145,7 @@ const RegisterSchool = () => {
         <Select
           label={isTertiary ? "Institution Type" : "Category"}
           name="category"
-          value={formData.category}
+          value={(formData.category as string) || ""}
           onChange={(value) =>
             updateFieldWithValidation(
               "category",
@@ -166,7 +165,7 @@ const RegisterSchool = () => {
         <Checkbox
           label="I agree to the"
           name="termsAccepted"
-          checked={formData.termsAccepted}
+          checked={(formData.termsAccepted as boolean) || false}
           onChange={(checked) =>
             updateFieldWithValidation(
               "termsAccepted",

@@ -345,8 +345,6 @@ const AdminAccounts = () => {
   };
 
   const handleSaveAdmin = (_adminData: any) => {
-    // console.log("Saving admin:", adminData);
-    // Here you would typically add the admin to your data
     setIsModalOpen(false);
   };
 

@@ -89,6 +89,10 @@ export const PaymentEndpoints = {
     organizationId 
       ? `/api/v2/payment/pricing?organization=${organizationId}`
       : '/api/v2/payment/pricing',
+  getProfitSharingAccounts: '/api/v2/payment/profit-sharing-accounts',
+  addProfitSharingAccount: '/api/v2/payment/profit-sharing-accounts',
+  updateProfitSharingAccount: (id: string) => `/api/v2/payment/profit-sharing-accounts/${id}`,
+  deleteProfitSharingAccount: (id: string) => `/api/v2/payment/profit-sharing-accounts/${id}`,
 };
 
 // Config Endpoints

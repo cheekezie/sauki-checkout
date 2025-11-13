@@ -34,8 +34,6 @@ const StudentDetailsModal = ({
     termAdmitted: string;
     academicRecords: any[];
   }) => {
-    // console.log("Saving academic history:", data);
-    // Here you would typically update the student's academic history
   };
 
   if (!isOpen) return null;

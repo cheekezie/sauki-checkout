@@ -45,14 +45,12 @@ const AdminVerification = () => {
 
     try {
       await verifyAdminOTP(phoneNumber, codeValue);
-      // console.log("Admin OTP Verification Response:", response);
       showSuccess(
         "Verification Successful",
         "You can now log in to your account."
       );
       navigate("/login");
     } catch (error: any) {
-      // console.error("Verification failed:", error);
       showError(
         "Verification Failed",
         error.message ||

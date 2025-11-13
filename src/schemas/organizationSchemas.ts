@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { emailSchema, phoneSchema } from "./authSchemas";
+import { emailSchema } from "./authSchemas";
 
 /**
  * Organization Registration Schema for Dashboard

@@ -23,7 +23,6 @@ const ProfileDropdown = ({ onClose }: ProfileDropdownProps) => {
       await logout();
       onClose();
     } catch (error) {
-      // console.error("Logout failed:", error);
     }
   };
 

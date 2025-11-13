@@ -248,7 +248,7 @@ const AddCourseModal = ({
             <Button
               type="button"
               onClick={handleSubmit}
-              variant="primary"
+              variant="secondary"
               size="sm"
               fullWidth={false}
             >

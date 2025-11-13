@@ -22,28 +22,15 @@ const Verification = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // console.log("📝 Form submitted with data:", formData);
 
-    // Add detailed validation debugging
     const validationResult = validateForm(phoneOnlySchema);
-    // console.log("🔍 Form validation result:", validationResult);
-    // console.log("📱 Phone number being validated:", formData.phone);
-    // console.log("📱 Phone number length:", formData.phone?.length);
-    // console.log(
-    //   "📱 Phone number digits only:",
-    //   formData.phone?.replace(/\D/g, "")
-    // );
 
     if (!validationResult) {
-      // console.log("❌ Form validation failed");
-      // console.log("❌ Form errors:", errors);
       return;
     }
 
     try {
-      // console.log("📱 Sending OTP to:", formData.phone);
-      await resendPhoneOTP(formData.phone);
-      // console.log("✅ OTP sent successfully");
+      await resendPhoneOTP(formData.phone as string);
       showSuccess(
         "OTP Sent",
         "A new verification code has been sent to your phone number."
@@ -56,7 +43,6 @@ const Verification = () => {
         },
       });
     } catch (error: any) {
-      // console.error("❌ OTP send failed:", error);
       showError(
         "Resend Failed",
         error.message || "Failed to resend OTP. Please try again."
@@ -80,7 +66,7 @@ const Verification = () => {
           label="Phone Number"
           name="phone"
           type="tel"
-          value={formData.phone}
+          value={(formData.phone as string) || ""}
           onChange={(value) =>
             updateFieldWithValidation("phone", value, phoneOnlySchema)
           }

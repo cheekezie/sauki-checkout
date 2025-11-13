@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { X, Upload } from "lucide-react";
 import { Portal } from "../layout/Portal";
-import Button from "../ui/Button";
 import {
   GENDER_OPTIONS,
   STUDENT_CLASS_OPTIONS,
@@ -83,8 +82,6 @@ const AddStudentModal = ({
       }
     } else {
       if (csvData.file && csvData.class) {
-        // console.log("Saving CSV data:", csvData);
-        // Handle CSV upload logic here
         setCsvData({
           class: "",
           subclass: "",

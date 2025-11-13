@@ -306,7 +306,6 @@ const Settlements = () => {
             }
           }}
           onRowClick={(_row: SettlementTableRow) => {
-            // console.log("Row clicked:", row);
           }}
           exportFileName="settlements"
           striped

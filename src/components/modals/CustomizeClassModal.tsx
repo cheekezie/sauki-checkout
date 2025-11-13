@@ -9,11 +9,6 @@ import {
   useAssignedSubClasses,
 } from "@/hooks/useClasses";
 import { useConfirmModal } from "@/hooks/useConfirmModal";
-import { X, Trash2 } from "lucide-react";
-import Input from "../ui/Input";
-import { useToast } from "@/hooks/useToast";
-import type { ClassTableRow } from "@/pages/dashboard/students-hub/Classes";
-import Button from "../ui/Button";
 
 interface CustomizeClassModalProps {
   isOpen: boolean;
@@ -277,7 +272,7 @@ const CustomizeClassModal = ({
             <div className="flex items-end">
               <button
                 onClick={handleAssign}
-                className={`${Button.primary} w-full`}
+                className="bg-primary text-white hover:bg-primary/90 focus:ring-primary/50 border border-transparent w-full"
                 disabled={disableAssignButton}
               >
                 {assignSubClassMutation.isPending ? "Assigning..." : "Assign"}

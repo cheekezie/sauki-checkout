@@ -155,13 +155,13 @@ const Menu = ({ collapsed }: prop) => {
 								<img
 									src={LogoIcon}
 									className='h-8 transition-all duration-300 ease-in-out'
-									alt='Saukipay Icon'
+									alt='SaukiPay Icon'
 								/>
 							) : (
 								<img
 									src={LogoLight}
 									className='h-8 transition-all duration-300 ease-in-out'
-									alt='Saukipay Logo'
+									alt='SaukiPay Logo'
 								/>
 							)}
 						</div>

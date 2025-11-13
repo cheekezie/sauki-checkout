@@ -15,7 +15,7 @@ const variantClasses: Record<ButtonVariant, string> = {
   primary:
     "bg-primary text-white hover:bg-primary/90 focus:ring-primary/50 border border-transparent ",
   secondary:
-    "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 focus:ring-primary/20",
+    "bg-secondary text-white hover:bg-secondary/90 focus:ring-secondary/50 border border-transparent",
   danger:
     "bg-white text-red-600 border border-red-200 hover:bg-red-50 focus:ring-red-200",
   ghost:
@@ -32,7 +32,7 @@ const Button = ({
   children,
   className = "",
   fullWidth = true,
-  variant = "primary",
+  variant = "secondary",
   size = "md",
   ...props
 }: ButtonProps) => {

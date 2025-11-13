@@ -3,7 +3,7 @@ import type { DataTableColumn } from "../interface/ui.interface";
 import { formatTableDate } from "@/utils/tableFormatters";
 
 // Example 1: Simple Student List
-interface StudentData {
+interface StudentData extends Record<string, unknown> {
   id: string;
   name: string;
   email: string;
@@ -73,7 +73,7 @@ const studentColumns: DataTableColumn<StudentData>[] = [
 ];
 
 // Example 2: Fee Collection Summary
-interface FeeData {
+interface FeeData extends Record<string, unknown> {
   id: string;
   feeType: string;
   totalAmount: string;
@@ -129,7 +129,7 @@ const feeColumns: DataTableColumn<FeeData>[] = [
 ];
 
 // Example 3: Minimal Configuration (No filters, just display)
-interface SimpleData {
+interface SimpleData extends Record<string, unknown> {
   id: string;
   item: string;
   value: number;

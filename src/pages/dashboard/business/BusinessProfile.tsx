@@ -1367,11 +1367,9 @@ const OtherInformationTab = ({
       if (response && response.data && Array.isArray(response.data)) {
         setBanks(response.data);
       } else {
-        console.error("Invalid bank list response format:", response);
         setBanks([]);
       }
     } catch (error) {
-      console.error("Failed to fetch banks:", error);
       setBanks([]);
     } finally {
       setIsLoadingBanks(false);
@@ -1418,7 +1416,6 @@ const OtherInformationTab = ({
         error?.response?.data?.message ||
         "Failed to verify account. Please enter the account name manually.";
       showError("Verification Failed", errorMessage);
-      console.error("Failed to verify account:", error);
     } finally {
       setIsVerifyingAccount(false);
     }

@@ -1,4 +1,3 @@
-import { useMemo, useState } from "react";
 import AuthLayout from "../../components/auth/AuthLayout";
 import { Lock } from "lucide-react";
 import Button from "../../components/ui/Button";
@@ -25,9 +24,6 @@ const CreatePin = () => {
     if (!validateForm(createPinSchema)) {
       return;
     }
-
-    // Handle create PIN
-    // console.log("Creating PIN:", formData.pin);
   };
 
   return (
@@ -48,7 +44,7 @@ const CreatePin = () => {
               label="PIN"
               name="pin"
               type="password"
-              value={formData.pin}
+              value={(formData.pin as string) || ""}
               onChange={(value) => updateFieldWithValidation("pin", value, createPinSchema)}
               placeholder="Enter your 6-digit PIN"
               icon={Lock}
@@ -64,18 +60,18 @@ const CreatePin = () => {
             </p>
             <div
               className={`flex items-center gap-2 text-sm ${
-                formData.pin.length === 6 ? "text-green-600" : "text-red-600"
+                (formData.pin as string)?.length === 6 ? "text-green-600" : "text-red-600"
               }`}
             >
-              <span>{formData.pin.length === 6 ? "✓" : "✕"}</span>
+              <span>{(formData.pin as string)?.length === 6 ? "✓" : "✕"}</span>
               <span>Exactly 6 digits</span>
             </div>
             <div
               className={`flex items-center gap-2 text-sm ${
-                /^\d*$/.test(formData.pin) ? "text-green-600" : "text-red-600"
+                /^\d*$/.test((formData.pin as string) || "") ? "text-green-600" : "text-red-600"
               }`}
             >
-              <span>{/^\d*$/.test(formData.pin) ? "✓" : "✕"}</span>
+              <span>{/^\d*$/.test((formData.pin as string) || "") ? "✓" : "✕"}</span>
               <span>Numbers only</span>
             </div>
           </div>
@@ -86,7 +82,7 @@ const CreatePin = () => {
             label="Confirm PIN"
             name="confirmPin"
             type="password"
-            value={formData.confirmPin}
+            value={(formData.confirmPin as string) || ""}
             onChange={(value) => updateFieldWithValidation("confirmPin", value, createPinSchema)}
             placeholder="Confirm your PIN"
             icon={Lock}

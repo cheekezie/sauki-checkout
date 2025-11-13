@@ -26,14 +26,7 @@ const VerifyPaymentModal = ({ isOpen, onClose }: VerifyPaymentModalProps) => {
     
     setTimeout(() => {
       setIsChecking(false);
-      // Handle response and show results
     }, 1000);
-  };
-
-  const handleReset = () => {
-    setRegNumber("");
-    setSession("");
-    setInstitutionType("");
   };
 
   // Prevent body scroll when modal is open

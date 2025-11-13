@@ -242,15 +242,11 @@ const Parents = () => {
   };
 
   const handleSaveParent = (_parentData: Partial<Parent>) => {
-    // console.log("Saving parent:", parentData);
-    // Handle save logic here
     setIsEditModalOpen(false);
     setSelectedParent(null);
   };
 
   const handleAddNewParent = (_parentData: Partial<Parent>) => {
-    // console.log("Adding new parent:", parentData);
-    // Handle add logic here
     setIsAddModalOpen(false);
   };
 

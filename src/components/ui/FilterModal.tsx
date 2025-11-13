@@ -301,7 +301,7 @@ const FilterModal = ({
                 <Button
                   type="button"
                   onClick={handleApplyFilters}
-                  variant="primary"
+                  variant="secondary"
                   className="text-xs"
                 >
                   Apply Filters

@@ -9,7 +9,7 @@ import type { LatestInvoice } from "../../services/dashboard.service";
 import { formatCurrency } from "../../utils/formatCurrency";
 import { formatTableDate } from "@/utils/tableFormatters";
 
-interface PaymentData {
+interface PaymentData extends Record<string, unknown> {
   id: string;
   invoiceNo: string;
   paymentDate: string;
@@ -99,8 +99,6 @@ const PaymentHistory = ({ invoices = [] }: PaymentHistoryProps) => {
       title: "View Details",
       icon: FileText,
       onClick: (_row) => {
-        // console.log("View payment:", row);
-        // Navigate to payment details or open modal
       },
     },
   ];
@@ -153,11 +151,9 @@ const PaymentHistory = ({ invoices = [] }: PaymentHistoryProps) => {
           selectedRowKeys: [],
           selectedRows: [],
           onChange: (_keys, _rows) => {
-            // console.log("Selected payments:", keys, rows);
           },
         }}
         onRowClick={(_row) => {
-          // console.log("Row clicked:", row);
         }}
         exportFileName="payment-history"
         striped

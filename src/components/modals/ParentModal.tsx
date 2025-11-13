@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import {
   X,
-  Save,
   User,
   Mail,
   Phone,
@@ -28,6 +27,7 @@ interface ParentModalProps {
   parent?: Parent | null; // Optional - if provided, it's edit mode
   onSave: (parentData: Partial<Parent>) => void;
   editMode?: boolean; // Explicit edit mode flag (if parent is provided, this is inferred)
+  mode?: "create" | "edit"; // Mode for the modal
 }
 
 const ParentModal = ({
@@ -221,7 +221,7 @@ const ParentModal = ({
                 <Input
                   label="First Name"
                   name="firstName"
-                  value={formData.firstName || ""}
+                  value={(formData.firstName as string) || ""}
                   onChange={(value) => handleInputChange("firstName", value)}
                   placeholder="Enter first name"
                   required
@@ -230,7 +230,7 @@ const ParentModal = ({
                 <Input
                   label="Last Name"
                   name="lastName"
-                  value={formData.lastName || ""}
+                  value={(formData.lastName as string) || ""}
                   onChange={(value) => handleInputChange("lastName", value)}
                   placeholder="Enter last name"
                   required
@@ -240,7 +240,7 @@ const ParentModal = ({
                   label="Email"
                   name="email"
                   type="email"
-                  value={formData.email || ""}
+                  value={(formData.email as string) || ""}
                   onChange={(value) => handleInputChange("email", value)}
                   placeholder="Enter email address"
                   icon={Mail}
@@ -250,7 +250,7 @@ const ParentModal = ({
                 <Input
                   label="Phone Number"
                   name="phoneNumber"
-                  value={formData.phoneNumber || ""}
+                  value={(formData.phoneNumber as string) || ""}
                   onChange={(value) => handleInputChange("phoneNumber", value)}
                   placeholder="Enter phone number"
                   icon={Phone}
@@ -260,7 +260,7 @@ const ParentModal = ({
                 <Input
                   label="Address"
                   name="address"
-                  value={formData.address || ""}
+                  value={(formData.address as string) || ""}
                   onChange={(value) => handleInputChange("address", value)}
                   placeholder="Enter address"
                   icon={MapPin}
@@ -269,7 +269,7 @@ const ParentModal = ({
                 <Input
                   label="Occupation"
                   name="occupation"
-                  value={formData.occupation || ""}
+                  value={(formData.occupation as string) || ""}
                   onChange={(value) => handleInputChange("occupation", value)}
                   placeholder="Enter occupation"
                   icon={Briefcase}
@@ -278,7 +278,7 @@ const ParentModal = ({
                 <Select
                   label="Relationship"
                   name="relationship"
-                  value={formData.relationship || "Father"}
+                  value={(formData.relationship as string) || "Father"}
                   onChange={(value) => handleInputChange("relationship", value)}
                   options={[
                     { value: "Father", label: "Father" },
@@ -290,7 +290,7 @@ const ParentModal = ({
                 <Select
                   label="Status"
                   name="status"
-                  value={formData.status || "active"}
+                  value={(formData.status as string) || "active"}
                   onChange={(value) => handleInputChange("status", value)}
                   options={[
                     { value: "active", label: "Active" },
@@ -421,7 +421,7 @@ const ParentModal = ({
             <Button
               type="button"
               disabled={isSubmitting}
-              variant="primary"
+              variant="secondary"
               size="sm"
               fullWidth={false}
               className="flex items-center gap-2"

@@ -28,7 +28,7 @@ const AcademicHistoryModal = ({
   isOpen,
   onClose,
   studentName,
-  onSave,
+  onSave: _onSave,
   initialData,
 }: AcademicHistoryModalProps) => {
   const [termAdmitted, setTermAdmitted] = useState("First Term");
@@ -42,14 +42,6 @@ const AcademicHistoryModal = ({
       setAcademicRecords(initialData.academicRecords);
     }
   }, [isOpen, initialData]);
-
-  const handleSave = () => {
-    onSave({
-      termAdmitted,
-      academicRecords,
-    });
-    onClose();
-  };
 
   const addAcademicRecord = () => {
     const newId = (academicRecords.length + 1).toString();
