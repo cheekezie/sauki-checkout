@@ -1,7 +1,7 @@
 import { useFormValidation } from '@/hooks';
 import { Button, Input } from '../ui';
 import { useState } from 'react';
-import { CreditCardIcon } from 'lucide-react';
+import { Calendar, CreditCardIcon, KeyIcon, Lock } from 'lucide-react';
 import Form from '../ui/Form';
 
 interface props {
@@ -41,7 +41,7 @@ const CardDetails = ({ amount }: props) => {
             value={formData.expiry as string}
             onChange={(value) => updateField('expiry', value)}
             placeholder='MM / YY'
-            icon={CreditCardIcon}
+            icon={Calendar}
             error={errors.expiry}
           />
 
@@ -54,7 +54,7 @@ const CardDetails = ({ amount }: props) => {
               value={formData.cvv as string}
               onChange={(value) => updateField('cvv', value)}
               placeholder='000'
-              icon={CreditCardIcon}
+              icon={Lock}
               error={errors.cvv}
             />
           </div>
