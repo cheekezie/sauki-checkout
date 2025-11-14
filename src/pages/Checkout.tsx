@@ -1,6 +1,9 @@
 import { LogoDark } from '@/assets';
+import CardDetails from '@/components/Payment/CardDetails';
+import TransferInstructions from '@/components/Payment/TransferInstructions';
+import UssdCode from '@/components/Payment/UssdCode';
 import { AnimatePresence, motion } from 'framer-motion';
-import { CreditCard, Hash, HouseIcon, QrCodeIcon, SendHorizonalIcon, WalletIcon } from 'lucide-react';
+import { CreditCard, Hash, Landmark, LockKeyholeIcon, QrCodeIcon, SendHorizonalIcon, WalletIcon } from 'lucide-react';
 import { useState } from 'react';
 
 const PaymentOptions = [
@@ -18,7 +21,7 @@ const PaymentOptions = [
   },
   {
     option: 'bank',
-    icon: HouseIcon,
+    icon: Landmark,
     title: 'Bank Branch',
     stage: '',
   },
@@ -42,7 +45,7 @@ const PaymentOptions = [
   },
 ];
 export default function Checkout() {
-  const [activeOption, setactiveOption] = useState('card');
+  const [option, setactiveOption] = useState('card');
   //   const navigate = useNavigate();
 
   const optionSelected = (option: string) => {
@@ -92,7 +95,7 @@ export default function Checkout() {
 
       {/* Checkout UI */}
       <section className='flex justify-center items-center min-h-screen' style={{ backgroundColor: '#E5E5E5' }}>
-        <div className='mx-auto max-w-[733px] w-full bg-white rounded-xl'>
+        <div className='mx-auto max-w-[733px] w-full'>
           <AnimatePresence>
             <motion.div
               initial={{ opacity: 0 }}
@@ -104,23 +107,21 @@ export default function Checkout() {
               <div className='grid grid-cols-[240px_1fr]'>
                 <div className='bg-primary px-[22px] py-8'>
                   <img src={LogoDark} alt='SaukiPay Logo' className='w-100' />
-                  <div>
+                  <div className='mt-[55px]'>
                     {PaymentOptions.map((item) => (
                       <div key={item.option} className='relative'>
                         <button
                           onClick={() => optionSelected(item.option)}
                           className={`w-full flex items-center gap-3 px-3 py-5 rounded-lg transition-colors text-secondary ${
-                            activeOption === item.option && 'bg-secondary text-white'
+                            option === item.option && 'bg-secondary text-white'
                           }`}
                         >
                           <item.icon
-                            className={`w-5 h-5 shrink-0 text-secondary ${
-                              activeOption === item.option && 'text-white'
-                            }`}
+                            className={`w-5 h-5 shrink-0 text-secondary ${option === item.option && 'text-white'}`}
                           />
                           <span className='text-sm'>{item.title}</span>
                           {item.stage && (
-                            <span className='text-xsm uppercase text-red-500 absolute right-1 top-1/2 -translate-y-1/2'>
+                            <span className='text-xsm uppercase bg-red-500 text-white absolute right-1 top-1/2 -translate-y-1/2 rounded-[36px] px-2.5 py-1.5'>
                               {item.stage}
                             </span>
                           )}
@@ -141,10 +142,42 @@ export default function Checkout() {
                     <button className='text-xl text-dark'>Close</button>
                   </div>
                   <h2 className='text-dark mb-4 text-base'>Payment Summary</h2>
-                  <p className='text-gray-stroke text-xsm'>
-                    Lorem ipsum dolor sit amet consectetur. Pharetra dui ac quisque fringilla et magna sodales.
+                  <p className='text-gray text-xsm'>
+                    Below is a summary of the charges for this transaction. Please confirm the details before making
+                    payment
                   </p>
+                  <div className='border border-gray-light mt-4.5' />
+                  <div className='my-4.5'>
+                    <div className='grid grid-cols-[100px_1fr] mb-4'>
+                      <span className='text-gray text-sm'>Merchant ID</span>
+                      <span className='text-dark text-sm font-semibold truncate text-right'>7Central Inc.</span>
+                    </div>
+                    <div className='grid grid-cols-[100px_1fr] mb-4'>
+                      <span className='text-gray text-sm'>Description</span>
+                      <span className='text-dark text-sm font-semibold truncate text-right'>Port clearance duty</span>
+                    </div>
+                  </div>
+                  <div className='border-2 border-gray mb-4.5' />
+                  <div className='grid grid-cols-[100px_1fr] mb-4'>
+                    <span className='text-gray text-sm'>Amount</span>
+                    <span className='text-dark text-sm font-semibold truncate text-right'>N200,000.00</span>
+                  </div>
+
+                  {/* PAYMENT DETAILS */}
+                  <div>
+                    {option === 'card' && <CardDetails amount={2000} />}
+                    {option === 'transfer' && <TransferInstructions amount={2000} />}
+                    {option === 'ussd' && <UssdCode amount={2000} />}
+                  </div>
                 </div>
+              </div>
+
+              <div className='text-center flex justify-center items-center mt-4 text-sm'>
+                <LockKeyholeIcon className='mr-3 text-dark w-5' />
+                <span className='mr-1'>Secured by</span>
+                <a href='http://saukipay.net' target='_blank' rel='noopener noreferrer'>
+                  Saukipay
+                </a>
               </div>
             </motion.div>
           </AnimatePresence>

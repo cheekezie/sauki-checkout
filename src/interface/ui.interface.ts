@@ -1,22 +1,26 @@
-import type { ReactNode } from "react";
-import type { LucideIcon } from "lucide-react";
+import type { ReactNode } from 'react';
+import type { LucideIcon } from 'lucide-react';
 
 // Input Component
 export interface InputProps {
   label: string;
   name: string;
-  type?: "text" | "email" | "tel" | "password" | "number" | "date";
+  type?: 'text' | 'email' | 'tel' | 'password' | 'number' | 'date' | 'month';
   placeholder?: string;
   value: string;
   onChange: (value: string) => void;
   onBlur?: () => void;
   icon?: LucideIcon;
   maxLength?: number;
+  max?: number;
   required?: boolean;
   disabled?: boolean;
   error?: string;
   helperText?: string;
   className?: string;
+  mask?: string;
+  expiryDate?: boolean;
+  allowedChars?: string[];
   inputClassName?: string;
 }
 
@@ -39,9 +43,9 @@ export interface TextareaProps {
 
 // Button Component
 export interface ButtonProps {
-  type?: "button" | "submit" | "reset";
-  variant?: "primary" | "secondary" | "outline" | "ghost";
-  size?: "sm" | "md" | "lg";
+  type?: 'button' | 'submit' | 'reset';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
   disabled?: boolean;
   loading?: boolean;
   className?: string;
@@ -97,7 +101,7 @@ export interface OTPInputProps {
 // Toast Component
 export interface Toast {
   id: string;
-  type: "success" | "error" | "warning" | "info";
+  type: 'success' | 'error' | 'warning' | 'info';
   title: string;
   message?: string;
   duration?: number;
@@ -128,7 +132,7 @@ export interface FeatureCardProps {
   heading: string;
   items: string[];
   className?: string;
-  selectedType?: "school" | "other";
+  selectedType?: 'school' | 'other';
 }
 
 // Portal Component
@@ -137,7 +141,7 @@ export interface PortalProps {
 }
 
 // Modal Components
-export type ModalType = "email-sent" | "pin-success" | "verification-success" | "confirmation" | "info" | "error";
+export type ModalType = 'email-sent' | 'pin-success' | 'verification-success' | 'confirmation' | 'info' | 'error';
 
 export interface ModalProps {
   isOpen: boolean;
@@ -258,51 +262,51 @@ export interface DataTableProps<T = any> {
   columns: DataTableColumn<T>[];
   loading?: boolean;
   error?: string;
-  
+
   // Row Configuration
   rowKey?: string | ((record: T) => string);
   onRowClick?: (row: T, index: number) => void;
   onRowDoubleClick?: (row: T, index: number) => void;
   rowClassName?: (record: T, index: number) => string;
-  
+
   // Selection
   selection?: DataTableSelection<T>;
   selectionColumnWidth?: string | number;
-  
+
   // Actions
   actions?: DataTableAction<T>[];
   actionColumnTitle?: string;
   actionColumnWidth?: string | number;
-  
+
   // Sorting
   sortable?: boolean;
   defaultSort?: DataTableSort;
   onSortChange?: (sort: DataTableSort) => void;
-  
+
   // Filtering
   searchable?: boolean;
   searchPlaceholder?: string;
   searchFields?: string[];
   filters?: DataTableFilter[];
   onFilterChange?: (filters: DataTableFilter[]) => void;
-  
+
   // Pagination
   pagination?: DataTablePagination | false;
   onPageChange?: (page: number, pageSize: number) => void;
-  
+
   // Export
   exportable?: boolean;
   exportFileName?: string;
   onExport?: (data: T[], format: 'csv' | 'excel') => void;
-  
+
   // Column Management
   columnManagement?: boolean;
   onColumnChange?: (columns: DataTableColumn<T>[]) => void;
-  
+
   // Virtual Scrolling
   virtualScrolling?: boolean;
   virtualScrollingHeight?: number;
-  
+
   // Styling
   className?: string;
   headerClassName?: string;
@@ -311,14 +315,14 @@ export interface DataTableProps<T = any> {
   bordered?: boolean;
   striped?: boolean;
   hoverable?: boolean;
-  
+
   // Empty State
   emptyText?: string;
   emptyIcon?: LucideIcon;
-  
+
   // Loading State
   loadingText?: string;
-  
+
   // Responsive
   responsive?: boolean;
   scroll?: {

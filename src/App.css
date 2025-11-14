@@ -12,8 +12,9 @@
   --color-bg: #ffffff;
   --color-text: #0f172a;
   --color-dark: #144049;
-  --color-gray-stroke: #9a9a9a;
-  --color-off-white: #f7fafb;
+  --color-gray: #9a9a9a;
+  --color-gray-light: #efefef;
+  --color-off-white: #fafafa;
   --text-md: 14px;
   --text-sm: 12px;
   --text-xsm: 10px;
