@@ -2,7 +2,6 @@ import { LogoDark } from '@/assets';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CreditCard, Hash, HouseIcon, QrCodeIcon, SendHorizonalIcon, WalletIcon } from 'lucide-react';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 const PaymentOptions = [
   {
@@ -44,7 +43,7 @@ const PaymentOptions = [
 ];
 export default function Checkout() {
   const [activeOption, setactiveOption] = useState('card');
-  const navigate = useNavigate();
+  //   const navigate = useNavigate();
 
   const optionSelected = (option: string) => {
     setactiveOption(option);
