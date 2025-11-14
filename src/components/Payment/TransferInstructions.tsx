@@ -18,11 +18,11 @@ const TransferInstructions = ({ amount }: props) => {
   };
   return (
     <div>
-      <div className='grid grid-cols-[100px_1fr] border-b border-b-gray-light bg-off-white px-5 py-4'>
+      <div className='grid grid-cols-[100px_1fr] border-b border-b-gray-light bg-off-white px-5 py-3'>
         <span className='text-gray text-sm'>Bank</span>
-        <span className='text-dark text-sm font-semibold truncate text-right'>Accecc Bank Plc</span>
+        <span className='text-dark text-sm font-semibold truncate text-right'>Access Bank Plc</span>
       </div>
-      <div className='grid grid-cols-[120px_1fr] items-center border-b border-b-gray-light bg-off-white px-5 py-4'>
+      <div className='grid grid-cols-[120px_1fr] items-center border-b border-b-gray-light bg-off-white px-5 py-3'>
         <span className='text-gray text-sm'>Account Number</span>
         <span className='text-dark text-sm font-semibold truncate text-right flex items-center justify-end'>
           2345678901
@@ -31,11 +31,11 @@ const TransferInstructions = ({ amount }: props) => {
           </button>
         </span>
       </div>
-      <div className='grid grid-cols-[130px_1fr] border-b border-b-gray-light bg-off-white px-5 py-4'>
+      <div className='grid grid-cols-[130px_1fr] border-b border-b-gray-light bg-off-white px-5 py-3'>
         <span className='text-gray text-sm'>Account Name</span>
         <span className='text-dark text-sm font-semibold truncate text-right'>Sauki MFBank Checkout</span>
       </div>
-      <div className='grid grid-cols-[100px_1fr] items-center border-b border-b-gray-light bg-off-white px-5 py-4'>
+      <div className='grid grid-cols-[100px_1fr] items-center border-b border-b-gray-light bg-off-white px-5 py-3'>
         <span className='text-gray text-sm'>Amount</span>
 
         <span className='text-dark text-sm font-semibold truncate text-right flex items-center justify-end'>
@@ -46,7 +46,7 @@ const TransferInstructions = ({ amount }: props) => {
         </span>
       </div>
 
-      <div className='ma-x-w-[228px] text-center mt-8 text-gray text-xsm'>
+      <div className='text-center mt-8 text-gray text-xsm px-3'>
         This is only valid for one transaction and will expire in 30:00. Please make payment to the account details
         below.
       </div>

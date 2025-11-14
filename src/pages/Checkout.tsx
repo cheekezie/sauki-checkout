@@ -3,7 +3,16 @@ import CardDetails from '@/components/Payment/CardDetails';
 import TransferInstructions from '@/components/Payment/TransferInstructions';
 import UssdCode from '@/components/Payment/UssdCode';
 import { AnimatePresence, motion } from 'framer-motion';
-import { CreditCard, Hash, Landmark, LockKeyholeIcon, QrCodeIcon, SendHorizonalIcon, WalletIcon } from 'lucide-react';
+import {
+  AlertTriangle,
+  CreditCard,
+  Hash,
+  Landmark,
+  LockKeyholeIcon,
+  QrCodeIcon,
+  SendHorizonalIcon,
+  WalletIcon,
+} from 'lucide-react';
 import { useState } from 'react';
 
 const PaymentOptions = [
@@ -12,44 +21,53 @@ const PaymentOptions = [
     icon: WalletIcon,
     title: 'Sauki Wallet',
     stage: 'beta',
+    active: false,
   },
   {
     option: 'card',
     icon: CreditCard,
     title: 'Debit Card',
     stage: '',
+    active: true,
   },
   {
     option: 'bank',
     icon: Landmark,
     title: 'Bank Branch',
     stage: '',
+    active: false,
   },
   {
     option: 'transfer',
     icon: SendHorizonalIcon,
     title: 'Transfer',
     stage: '',
+    active: true,
   },
   {
     option: 'ussd',
     icon: Hash,
     title: 'USSD',
     stage: '',
+    active: true,
   },
   {
     option: 'qrcode',
     icon: QrCodeIcon,
     title: 'QR Code',
     stage: '',
+    active: false,
   },
 ];
 export default function Checkout() {
   const [option, setactiveOption] = useState('card');
+  const [optionActive, setoptionActive] = useState(true);
   //   const navigate = useNavigate();
 
-  const optionSelected = (option: string) => {
-    setactiveOption(option);
+  const optionSelected = (val: string) => {
+    const paymentOption = PaymentOptions.find((p) => p.option === val);
+    setactiveOption(val);
+    setoptionActive(paymentOption?.active ?? false);
   };
   return (
     <>
@@ -164,11 +182,19 @@ export default function Checkout() {
                   </div>
 
                   {/* PAYMENT DETAILS */}
-                  <div>
-                    {option === 'card' && <CardDetails amount={2000} />}
-                    {option === 'transfer' && <TransferInstructions amount={2000} />}
-                    {option === 'ussd' && <UssdCode amount={2000} />}
-                  </div>
+                  {!optionActive && (
+                    <div className='bg-off-white py-8 px-6 text-center rounded-2xl flex flex-col justify-center items-center'>
+                      <AlertTriangle className='text-orange-400' />
+                      <p className='text-dark mt-4'>Payment option not available</p>
+                    </div>
+                  )}
+                  {optionActive && (
+                    <div>
+                      {option === 'card' && <CardDetails amount={2000} />}
+                      {option === 'transfer' && <TransferInstructions amount={2000} />}
+                      {option === 'ussd' && <UssdCode amount={2000} />}
+                    </div>
+                  )}
                 </div>
               </div>
 
