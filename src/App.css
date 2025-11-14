@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* 
  * Suppress CSS validation warnings for Tailwind CSS v4 directives
@@ -7,19 +7,22 @@
 /* stylelint-disable-next-line at-rule-no-unknown */
 /* @suppress */
 @theme {
-  --color-primary: #FFD47D;
+  --color-primary: #ffd47d;
   --color-secondary: #144049;
   --color-bg: #ffffff;
   --color-text: #0f172a;
-  --color-dark: #505050;
+  --color-dark: #144049;
+  --color-gray-stroke: #9a9a9a;
   --color-off-white: #f7fafb;
-  
-  --font-family-sans: "Sora", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --text-md: 14px;
+  --text-sm: 12px;
+  --text-xsm: 10px;
+  --font-family-sans: 'Sora', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
 /* Fallback CSS custom properties for compatibility */
 :root {
-  --color-primary: #FFD47D;
+  --color-primary: #ffd47d;
   --color-secondary: #144049;
   --color-bg: #ffffff;
   --color-text: #0f172a;
@@ -118,4 +121,8 @@ body {
 
 .animate-in.slide-in-from-right {
   animation: slide-in-from-right 0.3s ease-out;
+}
+
+button {
+  cursor: pointer;
 }
