@@ -1,7 +1,7 @@
 import { useFormValidation } from '@/hooks';
-import { Button, Input } from '../ui';
+import { Calendar, CreditCardIcon, Lock } from 'lucide-react';
 import { useState } from 'react';
-import { Calendar, CreditCardIcon, KeyIcon, Lock } from 'lucide-react';
+import { Button, Input } from '../ui';
 import Form from '../ui/Form';
 
 interface props {
