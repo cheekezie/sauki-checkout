@@ -5,11 +5,14 @@ import UssdCode from '@/components/Payment/UssdCode';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   AlertTriangle,
+  ChevronDown,
   CreditCard,
   Hash,
   Landmark,
   LockKeyholeIcon,
   QrCodeIcon,
+  RedoIcon,
+  RefreshCcwDotIcon,
   SendHorizonalIcon,
   WalletIcon,
 } from 'lucide-react';
@@ -112,8 +115,8 @@ export default function Checkout() {
       </section> */}
 
       {/* Checkout UI */}
-      <section className='flex justify-center items-center min-h-screen' style={{ backgroundColor: '#E5E5E5' }}>
-        <div className='mx-auto max-w-[733px] w-full'>
+      <section className='flex justify-center items-center min-h-screen px-6' style={{ backgroundColor: '#E5E5E5' }}>
+        <div className='mx-auto max-w-[733px] w-full mb-4'>
           <AnimatePresence>
             <motion.div
               initial={{ opacity: 0 }}
@@ -122,16 +125,16 @@ export default function Checkout() {
               transition={{ duration: 0.35, ease: 'easeOut' }}
               className=''
             >
-              <div className='grid grid-cols-[240px_1fr]'>
+              <div className='sm:grid grid-cols-[240px_1fr]'>
                 <div className='bg-primary px-[22px] py-8'>
-                  <img src={LogoDark} alt='SaukiPay Logo' className='w-100' />
+                  <img src={LogoDark} alt='SaukiPay Logo' className='w-30 sm:w-100 mx-auto' />
                   <div className='mt-[55px]'>
                     {PaymentOptions.map((item) => (
                       <div key={item.option} className='relative'>
                         <button
                           onClick={() => optionSelected(item.option)}
-                          className={`w-full flex items-center gap-3 px-3 py-5 rounded-lg transition-colors text-secondary ${
-                            option === item.option && 'bg-secondary text-white'
+                          className={`w-full items-center gap-3 relative px-3 py-5 rounded-lg hidden sm:flex transition-colors text-secondary ${
+                            option === item.option && 'bg-secondary flex! text-white'
                           }`}
                         >
                           <item.icon
@@ -139,10 +142,19 @@ export default function Checkout() {
                           />
                           <span className='text-sm'>{item.title}</span>
                           {item.stage && (
-                            <span className='text-xsm uppercase bg-red-500 text-white absolute right-1 top-1/2 -translate-y-1/2 rounded-[36px] px-2.5 py-1.5'>
+                            <span
+                              className={`text-xsm uppercase bg-red-500 text-white right-10 sm:right-0
+                            absolute top-1/2 -translate-y-1/2 rounded-[36px] px-2.5 py-1.5 
+                            ${option === item.option && 'sm:right-3'}`}
+                            >
                               {item.stage}
                             </span>
                           )}
+                          <ChevronDown
+                            className={`w-5 h-5 text-secondary absolute block sm:hidden top-1/2 -translate-y-1/2 right-3 ${
+                              option === item.option && 'text-white'
+                            }`}
+                          />
                         </button>
                       </div>
                     ))}
@@ -195,6 +207,13 @@ export default function Checkout() {
                       {option === 'ussd' && <UssdCode amount={2000} />}
                     </div>
                   )}
+
+                  <div className='flex justify-center items-center sm:hidden'>
+                    <button className='mt-8 text-primary flex text-base'>
+                      <RefreshCcwDotIcon className='text-primary mr-3 w-5' />
+                      Change payment method
+                    </button>
+                  </div>
                 </div>
               </div>
 
