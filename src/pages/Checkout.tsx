@@ -11,7 +11,6 @@ import {
   Landmark,
   LockKeyholeIcon,
   QrCodeIcon,
-  RedoIcon,
   RefreshCcwDotIcon,
   SendHorizonalIcon,
   WalletIcon,
