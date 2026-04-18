@@ -5,20 +5,13 @@ import './App.css';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import ModalContainer from './components/modals/ModalContainer';
 import { ComponentLoading } from './components/ui/LoadingSpinner';
-import {
-  AuthProvider,
-  GlobalErrorProvider,
-  ModalProvider,
-  OnboardingProvider,
-  OrgProvider,
-  ToastProvider,
-} from './contexts';
+import { GlobalErrorProvider, ModalProvider, ToastProvider } from './contexts';
 import ReactQueryProvider from './providers/ReactQueryProvider';
 
 // Lazy load all page components for code splitting
-const Checkout = React.lazy(() => import('./pages/Checkout'));
+const Checkout = React.lazy(() => import('./features/checkout'));
 
-const NotFound = React.lazy(() => import('./pages/NotFound'));
+const NotFound = React.lazy(() => import('./features/NotFound'));
 
 // Add these imports at the top with other lazy imports
 
@@ -34,35 +27,29 @@ function App() {
         <Router>
           <ToastProvider>
             <ModalProvider>
-              <AuthProvider>
-                <OnboardingProvider>
-                  <OrgProvider>
-                    <ReactQueryProvider>
-                      <Routes>
-                        <Route
-                          path='/'
-                          element={
-                            <LazyRoute>
-                              <Checkout />
-                            </LazyRoute>
-                          }
-                        />
+              <ReactQueryProvider>
+                <Routes>
+                  <Route
+                    path='/'
+                    element={
+                      <LazyRoute>
+                        <Checkout />
+                      </LazyRoute>
+                    }
+                  />
 
-                        {/* Catch-all for other Wildcard routes */}
-                        <Route
-                          path='*'
-                          element={
-                            <LazyRoute>
-                              <NotFound />
-                            </LazyRoute>
-                          }
-                        />
-                      </Routes>
-                      <ModalContainer />
-                    </ReactQueryProvider>
-                  </OrgProvider>
-                </OnboardingProvider>
-              </AuthProvider>
+                  {/* Catch-all for other Wildcard routes */}
+                  <Route
+                    path='*'
+                    element={
+                      <LazyRoute>
+                        <NotFound />
+                      </LazyRoute>
+                    }
+                  />
+                </Routes>
+                <ModalContainer />
+              </ReactQueryProvider>
             </ModalProvider>
           </ToastProvider>
         </Router>
