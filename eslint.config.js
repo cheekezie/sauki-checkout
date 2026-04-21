@@ -24,12 +24,7 @@ export default defineConfig([
           varsIgnorePattern: '^_',
         },
       ],
-      'no-console': [
-        'warn',
-        {
-          allow: ['warn', 'error'],
-        },
-      ],
+      'no-console': off,
     },
     languageOptions: {
       ecmaVersion: 2020,

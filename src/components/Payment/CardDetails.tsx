@@ -23,7 +23,8 @@ const CardDetails = ({ amount }: props) => {
         <Input
           label='Card Number'
           name='cardNumber'
-          type='number'
+          type='text'
+          autoComplete='cc-number'
           value={formData.cardNumber as string}
           onChange={(value) => updateField('cardNumber', value)}
           placeholder='0000 0000 0000 0000'
@@ -38,6 +39,7 @@ const CardDetails = ({ amount }: props) => {
             type='text'
             mask='MM / YYYY'
             expiryDate={true}
+            autoComplete='cc-exp'
             value={formData.expiry as string}
             onChange={(value) => updateField('expiry', value)}
             placeholder='MM / YY'
@@ -51,6 +53,7 @@ const CardDetails = ({ amount }: props) => {
               name='cvv'
               type='text'
               maxLength={3}
+              autoComplete='cc-csc'
               value={formData.cvv as string}
               onChange={(value) => updateField('cvv', value)}
               placeholder='000'

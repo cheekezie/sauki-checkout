@@ -18,6 +18,7 @@ const Input = ({
   error,
   helperText,
   expiryDate,
+  autoComplete,
   className = '',
   inputClassName = '',
 }: InputProps) => {
@@ -28,16 +29,19 @@ const Input = ({
     let newValue = e.target.value;
 
     if (expiryDate) {
-      let input = e.target.value.replace(/\D/g, ''); // remove non-digits
-
-      // MM YYYY → ensure max 6 digits
+      let input = e.target.value.replace(/\D/g, '');
       if (input.length > 6) input = input.slice(0, 6);
-
-      // Auto-insert slash after month
       if (input.length >= 3) {
         input = `${input.slice(0, 2)} / ${input.slice(2)}`;
       }
       onChange(input);
+      return;
+    }
+
+    if (name === 'cardNumber') {
+      const digits = newValue.replace(/\D/g, '').slice(0, 16);
+      newValue = digits.replace(/(.{4})/g, '$1 ').trimEnd();
+      onChange(newValue);
       return;
     }
 
@@ -87,8 +91,12 @@ const Input = ({
           maxLength={maxLength}
           required={required}
           disabled={disabled}
+          autoComplete={autoComplete}
           inputMode={
-            type === 'tel' || (type === 'password' && (name === 'password' || name === 'pin' || name === 'confirmPin'))
+            name === 'cardNumber' ||
+            name === 'cvv' ||
+            type === 'tel' ||
+            (type === 'password' && (name === 'password' || name === 'pin' || name === 'confirmPin'))
               ? 'numeric'
               : undefined
           }

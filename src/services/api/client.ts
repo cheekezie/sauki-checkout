@@ -1,341 +1,338 @@
-import axios from 'axios';
+import axios, { type AxiosError, type AxiosInstance, type AxiosResponse } from 'axios';
+import type { ApiResponse } from '@/types/api.types';
 import encHex from 'crypto-js/enc-hex';
 import hmacSHA512 from 'crypto-js/hmac-sha512';
 import { logger } from '../logger.service';
+import { decryptNestedResponse } from '@/utils/decryption';
+import security from '@/utils/security_algorithm';
+import { ENCRYPTION_KEY, API_BASE_URL } from '@/config/constants';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+// --- Global handlers (set by AuthProvider / ToastProvider after mount) ---
 
-// Global authentication error handler
 type AuthErrorHandler = (errorMessage?: string) => void;
+type ToastErrorHandler = (message: string, type?: 'error' | 'warning') => void;
+
 let globalAuthErrorHandler: AuthErrorHandler | null = null;
+let globalToastErrorHandler: ToastErrorHandler | null = null;
 let isHandlingAuthError = false;
 
-/**
- * Set the global authentication error handler
- * This will be called when a 401 error is detected
- * @param handler - Function that receives the error message from API
- */
 export const setGlobalAuthErrorHandler = (handler: AuthErrorHandler) => {
   globalAuthErrorHandler = handler;
 };
 
-export const generateSignature = async (accountId: string) => {
+export const setGlobalToastErrorHandler = (handler: ToastErrorHandler) => {
+  globalToastErrorHandler = handler;
+};
+
+// --- Signature ---
+
+export const generateSignature = async (
+  accountId: string
+): Promise<{ signature: string; timeStamp: number }> => {
   const apiKey = import.meta.env.VITE_API_KEY;
-  if (!apiKey) {
-    throw new Error('VITE_API_KEY is required for signature generation');
-  }
+  if (!apiKey) throw new Error('VITE_API_KEY is required for signature generation');
   const timeStamp = Math.floor(Date.now() / 1000);
-  const body = `${accountId}:${timeStamp}`;
-  const macCipher = hmacSHA512(body, apiKey);
-  const signature = macCipher.toString(encHex);
+  const signature = hmacSHA512(`${accountId}:${timeStamp}`, apiKey).toString(encHex);
   return { signature, timeStamp };
 };
 
+// --- Error types ---
+
 export class ApiError extends Error {
-  constructor(message: string) {
+  statusCode?: number;
+  code?: number;
+
+  constructor(message: string, statusCode?: number, code?: number) {
     super(message);
     this.name = 'ApiError';
-    this.message = message;
+    this.statusCode = statusCode;
+    this.code = code;
   }
-  get() {}
 }
 
-const getMessage = (message: any) => {
-  if (typeof message === 'object') {
-    const firstKey = Object.keys(message)[0];
-    const firstValue = message[firstKey];
-    return firstValue;
+// --- Helpers ---
+
+const isAxiosError = (err: unknown): err is AxiosError<Record<string, unknown>> =>
+  typeof err === 'object' && err !== null && 'isAxiosError' in err &&
+  (err as { isAxiosError: unknown }).isAxiosError === true;
+
+const extractMessage = (message: unknown): string => {
+  if (typeof message === 'string') return message;
+  if (Array.isArray(message) && message.length > 0) return String(message[0]);
+  if (typeof message === 'object' && message !== null) {
+    const first = Object.values(message as Record<string, unknown>)[0];
+    if (typeof first === 'string') return first;
+    if (Array.isArray(first) && first.length > 0) return String(first[0]);
   }
-  return message;
+  return 'An error occurred';
 };
 
-const _handleAxiosError = (err: any, endpoint?: string, method?: string) => {
-  if (err.isAxiosError && err.response) {
-    const { status, data } = err.response;
+const trigger401Logout = (message: string) => {
+  if (globalAuthErrorHandler && !isHandlingAuthError) {
+    isHandlingAuthError = true;
+    globalAuthErrorHandler(message);
+    setTimeout(() => { isHandlingAuthError = false; }, 2000);
+  }
+};
 
-    // Log API error (legacy behaviour didn't log all errors)
-    if (endpoint && method) {
-      logger.apiError(endpoint, method, err);
-    } else {
-      logger.error('API request failed', err);
-    }
+const handleAxiosError = (err: unknown, endpoint?: string, method?: string) => {
+  if (isAxiosError(err) && err.response) {
+    const { status, data } = err.response as { status: number; data: Record<string, unknown> };
 
-    // Auth Error - Handle Logout (legacy return-first pattern, plus handler call)
-    if (data.code === 401 || status === 401 || data.statusCode === 401) {
-      const errorMessage =
-        data.message ||
-        data.error ||
+    if (endpoint && method) logger.apiError(endpoint, method, err);
+    else logger.error('API request failed', err);
+
+    if (status === 401 || data?.code === 401 || data?.statusCode === 401) {
+      const message =
+        (typeof data.message === 'string' ? data.message : null) ||
         (typeof data.error === 'string' ? data.error : null) ||
         'Your session has expired. Please log in again.';
-
-      if (globalAuthErrorHandler && !isHandlingAuthError) {
-        isHandlingAuthError = true;
-        try {
-          globalAuthErrorHandler(errorMessage);
-          setTimeout(() => {
-            isHandlingAuthError = false;
-          }, 2000);
-        } catch (handlerError) {
-          logger.error('Error in global auth error handler', handlerError);
-          isHandlingAuthError = false;
-        }
-      }
-
-      return {
-        ...data,
-        message: errorMessage,
-        status: 'error',
-        statusCode: 401,
-        code: 401,
-      };
+      trigger401Logout(message);
+      return { ...data, message, status: 'error', statusCode: 401, code: 401 };
     }
 
-    if (data.message) {
-      const responsMsg = getMessage(data.message);
-      return { ...data, message: responsMsg };
-    }
+    const message = data.message
+      ? extractMessage(data.message)
+      : typeof data.error === 'string'
+        ? data.error
+        : status === 500 || status === 503
+          ? 'Unable to process request. Try again'
+          : 'An error occurred';
 
-    if (!data.message && !data.message && !data?.error) {
-      return { ...data, message: 'Unable to process request. Try again' };
-    }
-
-    if (data?.error && typeof data?.error === 'string') {
-      return { ...data, message: data?.error };
-    }
-
-    const message =
-      status === 500 || status === 503
-        ? 'Unable to process request. Try again'
-        : getMessage(data.message);
-    return { ...data, message };
+    globalToastErrorHandler?.(message, 'error');
+    return { ...data, message, status: 'error', statusCode: status, code: data.code || status };
   }
 
-  logger.error('Network or system error occurred', err);
-  const fallbackMessage =
-    typeof err?.message === 'string' && err.message.trim().length > 0
-      ? err.message
+  if (isAxiosError(err)) {
+    logger.error('Network error occurred', err);
+    const message =
+      err.code === 'ECONNABORTED' || err.message?.includes('timeout')
+        ? 'Request timeout. Please check your connection and try again.'
+        : err.code === 'ERR_NETWORK' || err.message?.includes('Network Error')
+          ? 'Network error. Please check your internet connection and try again.'
+          : err.message || 'Unable to connect to the server. Please try again later.';
+    globalToastErrorHandler?.(message, 'error');
+    return { message, status: 'error', statusCode: 1000, code: 1000 };
+  }
+
+  logger.error('Unknown error occurred', err);
+  const message =
+    err && typeof err === 'object' && 'message' in err && typeof (err as any).message === 'string'
+      ? (err as any).message || 'A system error occurred'
       : 'A system error occurred';
-  return {
-    message: fallbackMessage,
-    status: false,
-    statusCode: 1000,
-  };
+  globalToastErrorHandler?.(message, 'error');
+  return { message, status: 'error', statusCode: 1000, code: 1000 };
 };
 
-export class RequestService {
-  private static token: string | null = null;
-
-  /**
-   * Initialize token from localStorage
-   */
-  private static initializeToken() {
-    if (RequestService.token === null) {
-      RequestService.token = localStorage.getItem('auth_token');
-    }
+const rejectWithApiError = (err: unknown): never => {
+  if (isAxiosError(err) && err.response) {
+    const { status, data } = err.response as { status: number; data: Record<string, unknown> };
+    const message = (data?.message as string) || (data?.error as string) || 'Request failed';
+    return Promise.reject(new ApiError(message, status, status)) as never;
   }
+  return Promise.reject(new ApiError(err instanceof Error ? err.message : 'Network error', 1000)) as never;
+};
 
-  /**
-   * Set authentication token and persist to localStorage
-   */
-  static setToken(token: string | null) {
-    RequestService.token = token;
-    if (token) {
-      localStorage.setItem('auth_token', token);
-    } else {
-      localStorage.removeItem('auth_token');
-    }
-  }
+// --- Axios instance factory ---
 
-  /**
-   * Get current authentication token
-   */
-  static getToken() {
-    RequestService.initializeToken();
-    return RequestService.token;
-  }
+const createInstance = (headers: Record<string, string>, withCredentials = true): AxiosInstance => {
+  const instance = axios.create({ baseURL: API_BASE_URL, headers, withCredentials });
 
-  /**
-   * Check if user is authenticated
-   */
-  static isAuthenticated(): boolean {
-    RequestService.initializeToken();
-    return !!RequestService.token;
-  }
-  static constructQueryString = (params: { [key: string]: any }): string => {
-    return Object.keys(params)
-      .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
-      .join('&');
-  };
+  // Encrypt outgoing payloads
+  instance.interceptors.request.use(async (config) => {
+    if (!config.data || config.method?.toLowerCase() === 'get') return config;
 
-  static generateSignature = async (accountId: string) => {
-    const apiKey = import.meta.env.VITE_API_KEY;
-    if (!apiKey) {
-      throw new Error('VITE_API_KEY is required for signature generation');
-    }
-    const timeStamp = Math.floor(Date.now() / 1000);
-    const body = `${accountId}:${timeStamp}`;
-    const macCipher = hmacSHA512(body, apiKey);
-    const signature = macCipher.toString(encHex);
-    return { signature, timeStamp };
-  };
+    const contentType = config.headers?.['Content-Type'] || config.headers?.['content-type'] ||
+      headers['Content-Type'] || headers['content-type'];
+    if (contentType?.includes('multipart/form-data')) return config;
 
-  static _getAuthHeaders = async (file?: 'file' | 'json') => {
+    // Already encrypted
+    if (typeof config.data === 'object' && 'data' in config.data && typeof config.data.data === 'string')
+      return config;
+
+    if (!ENCRYPTION_KEY) throw new Error('ENCRYPTION_KEY is required for encryption');
     try {
-      const headers: Record<string, string> = {
-        Accept: 'application/json',
-        'Content-Type': file === 'file' ? 'multipart/form-data' : 'application/json',
-      };
-
-      const token = RequestService.getToken();
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-
-      // Add organization context if available
-      const activeOrgId = localStorage.getItem('active_org_id');
-      if (activeOrgId) {
-        headers['X-Organization-Id'] = activeOrgId;
-        // Also try alternate header name if backend uses it
-        headers['Organization-Id'] = activeOrgId;
-      }
-
-      return headers;
-    } catch (e: any) {
-      throw new Error('Could not get data from Async Storage');
+      config.data = { data: await security.encrypt(JSON.stringify(config.data), ENCRYPTION_KEY) };
+    } catch (error: any) {
+      logger.error('Failed to encrypt request payload', error);
+      throw new Error(`Encryption failed: ${error.message}`);
     }
-  };
+    return config;
+  });
 
-  static async get<T>(url: string) {
-    try {
-      const axiosInstance = axios.create({
-        baseURL: API_BASE_URL,
-        headers: await this._getAuthHeaders(),
-      });
-      const startTime = performance.now();
-      const response = await axiosInstance.get<T>(url);
-      const duration = performance.now() - startTime;
-      logger.performance(`GET ${url}`, duration);
-      return response.data;
-    } catch (err: any) {
-      throw _handleAxiosError(err, url, 'GET');
-    }
-  }
-
-  static async post<T>(url: string, data: { [key: string]: any }) {
-    try {
-      const axiosInstance = axios.create({
-        baseURL: API_BASE_URL,
-        headers: await this._getAuthHeaders(),
-      });
-      const startTime = performance.now();
-      const response = await axiosInstance.post<T>(url, data);
-      const duration = performance.now() - startTime;
-      logger.performance(`POST ${url}`, duration);
-      return response.data;
-    } catch (err: any) {
-      throw _handleAxiosError(err, url, 'POST');
-    }
-  }
-
-  static async delete<T>(url: string, data: { [key: string]: any }) {
-    try {
-      const startTime = performance.now();
-      const response = await axios.delete<T>(API_BASE_URL + url, {
-        headers: await this._getAuthHeaders(),
-        data,
-      });
-      const duration = performance.now() - startTime;
-      logger.performance(`DELETE ${url}`, duration);
-      return response.data;
-    } catch (err: any) {
-      throw _handleAxiosError(err, url, 'DELETE');
-    }
-  }
-
-  static async postFile<T>(url: string, data: { [key: string]: any }) {
-    try {
-      const axiosInstance = axios.create({
-        baseURL: API_BASE_URL,
-        headers: await this._getAuthHeaders('file'),
-      });
-      const startTime = performance.now();
-      const response = await axiosInstance.post<T>(url, data);
-      const duration = performance.now() - startTime;
-      logger.performance(`POST FILE ${url}`, duration);
-      return response.data;
-    } catch (err: any) {
-      throw _handleAxiosError(err, url, 'POST');
-    }
-  }
-
-  static async put<T>(url: string, data: { [key: string]: any }) {
-    try {
-      const axiosInstance = axios.create({
-        baseURL: API_BASE_URL,
-        headers: await this._getAuthHeaders(),
-      });
-      const startTime = performance.now();
-      const response = await axiosInstance.put<T>(url, data);
-      const duration = performance.now() - startTime;
-      logger.performance(`PUT ${url}`, duration);
-      return response.data;
-    } catch (err: any) {
-      throw _handleAxiosError(err, url, 'PUT');
-    }
-  }
-
-  static async patch<T>(url: string, data: { [key: string]: any }) {
-    try {
-      const axiosInstance = axios.create({
-        baseURL: API_BASE_URL,
-        headers: await this._getAuthHeaders(),
-      });
-      const startTime = performance.now();
-      const response = await axiosInstance.patch<T>(url, data);
-      const duration = performance.now() - startTime;
-      logger.performance(`PATCH ${url}`, duration);
-      return response.data;
-    } catch (err: any) {
-      throw _handleAxiosError(err, url, 'PATCH');
-    }
-  }
-
-  /**
-   * Get a file/blob response (for downloads)
-   * @param url - API endpoint URL
-   * @returns Blob response
-   */
-  static async getBlob(url: string): Promise<Blob> {
-    try {
-      const headers = await this._getAuthHeaders();
-      // Remove Content-Type for blob requests, let browser handle it
-      delete headers['Content-Type'];
-      headers['Accept'] = '*/*';
-
-      const axiosInstance = axios.create({
-        baseURL: API_BASE_URL,
-        headers,
-        responseType: 'blob',
-      });
-      const startTime = performance.now();
-      const response = await axiosInstance.get(url);
-      const duration = performance.now() - startTime;
-      logger.performance(`GET BLOB ${url}`, duration);
-      return response.data;
-    } catch (err: any) {
-      // For blob responses, we need to check if the error response is also a blob
-      if (err.response && err.response.data instanceof Blob) {
-        // Try to parse error message from blob
-        const text = await err.response.data.text();
+  // Decrypt incoming payloads + handle 401 centrally
+  instance.interceptors.response.use(
+    async (response: AxiosResponse) => {
+      if (response.data) {
         try {
-          const errorData = JSON.parse(text);
-          throw _handleAxiosError({ ...err, response: { ...err.response, data: errorData } }, url, 'GET');
+          response.data = await decryptNestedResponse(response.data);
         } catch {
-          throw new Error('Failed to download file');
+          // Not encrypted — leave as-is
         }
       }
-      throw _handleAxiosError(err, url, 'GET');
+      return response;
+    },
+    (error) => {
+      const status = error?.response?.status;
+      const data = error?.response?.data ?? {};
+      if (status === 401 || data?.code === 401 || data?.statusCode === 401) {
+        const message =
+          (typeof data.message === 'string' ? data.message : null) ||
+          (typeof data.error === 'string' ? data.error : null) ||
+          'Your session has expired. Please log in again.';
+        trigger401Logout(message);
+      }
+      return Promise.reject(error);
+    }
+  );
+
+  return instance;
+};
+
+// --- Headers ---
+
+const publicHeaders = (file?: 'file' | 'json'): Record<string, string> => ({
+  Accept: 'application/json',
+  'Content-Type': file === 'file' ? 'multipart/form-data' : 'application/json',
+});
+
+const authHeaders = async (file?: 'file' | 'json'): Promise<Record<string, string>> => {
+  const headers: Record<string, string> = {
+    Accept: 'application/json',
+    'Content-Type': file === 'file' ? 'multipart/form-data' : 'application/json',
+  };
+  const activeOrgId = localStorage.getItem('active_org_id');
+  if (activeOrgId) {
+    headers['X-Business-Id'] = activeOrgId;
+    headers['Business-Id'] = activeOrgId;
+  }
+  return headers;
+};
+
+const validateUrl = (url: string) => {
+  if (!url || url.includes('undefined'))
+    throw new ApiError('API endpoint not configured.', 400);
+};
+
+// --- RequestService ---
+
+export class RequestService {
+  /** @deprecated use module-level generateSignature */
+  static generateSignature = generateSignature;
+  static _getPublicHeaders = publicHeaders;
+  static _getAuthHeaders = authHeaders;
+  static constructQueryString = (params: Record<string, unknown>): string =>
+    Object.entries(params)
+      .filter(([, v]) => v !== undefined && v !== null && v !== '')
+      .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(String(v))}`)
+      .join('&');
+
+  static async get<T = unknown>(url: string, params?: object): Promise<ApiResponse<T>> {
+    if (params) {
+      const qs = RequestService.constructQueryString(params as Record<string, unknown>);
+      if (qs) url = `${url}?${qs}`;
+    }
+    validateUrl(url);
+    try {
+      const instance = createInstance(await authHeaders());
+      const t = performance.now();
+      const res = await instance.get<ApiResponse<T>>(url);
+      logger.performance(`GET ${url}`, performance.now() - t);
+      return res.data;
+    } catch (err) {
+      throw handleAxiosError(err, url, 'GET');
+    }
+  }
+
+  static async post<T = unknown>(url: string, data: any, useAuth = true, withCredentials = true): Promise<ApiResponse<T>> {
+    validateUrl(url);
+    try {
+      const headers = useAuth ? await authHeaders() : publicHeaders();
+      const instance = createInstance(headers, withCredentials);
+      const t = performance.now();
+      const res = await instance.post<ApiResponse<T>>(url, data);
+      logger.performance(`POST ${url}`, performance.now() - t);
+      return res.data;
+    } catch (err) {
+      throw handleAxiosError(err, url, 'POST');
+    }
+  }
+
+  static async put<T = unknown>(url: string, data: any): Promise<ApiResponse<T>> {
+    validateUrl(url);
+    try {
+      const instance = createInstance(await authHeaders());
+      const t = performance.now();
+      const res = await instance.put<ApiResponse<T>>(url, data);
+      logger.performance(`PUT ${url}`, performance.now() - t);
+      return res.data;
+    } catch (err) {
+      throw handleAxiosError(err, url, 'PUT');
+    }
+  }
+
+  static async patch<T = unknown>(url: string, data: Record<string, unknown>, withCredentials = true, skipAuthErrorHandler = false): Promise<ApiResponse<T>> {
+    validateUrl(url);
+    try {
+      const instance = createInstance(await authHeaders(), withCredentials);
+      const t = performance.now();
+      const res = await instance.patch<ApiResponse<T>>(url, data);
+      logger.performance(`PATCH ${url}`, performance.now() - t);
+      return res.data;
+    } catch (err) {
+      if (skipAuthErrorHandler) return rejectWithApiError(err);
+      throw handleAxiosError(err, url, 'PATCH');
+    }
+  }
+
+  static async delete<T = unknown>(url: string, data?: Record<string, unknown>): Promise<ApiResponse<T>> {
+    validateUrl(url);
+    try {
+      const instance = createInstance(await authHeaders());
+      const t = performance.now();
+      const res = await instance.delete<ApiResponse<T>>(url, { data });
+      logger.performance(`DELETE ${url}`, performance.now() - t);
+      return res.data;
+    } catch (err) {
+      throw handleAxiosError(err, url, 'DELETE');
+    }
+  }
+
+  static async postFile<T = unknown>(url: string, data: FormData | Record<string, unknown>): Promise<ApiResponse<T>> {
+    validateUrl(url);
+    try {
+      const instance = createInstance(await authHeaders('file'));
+      const t = performance.now();
+      const res = await instance.post<ApiResponse<T>>(url, data);
+      logger.performance(`POST FILE ${url}`, performance.now() - t);
+      return res.data;
+    } catch (err) {
+      throw handleAxiosError(err, url, 'POST');
+    }
+  }
+
+  static async getBlob(url: string): Promise<Blob> {
+    validateUrl(url);
+    try {
+      const headers = await authHeaders();
+      delete headers['Content-Type'];
+      headers['Accept'] = '*/*';
+      const instance = axios.create({ baseURL: API_BASE_URL, headers, responseType: 'blob', withCredentials: true });
+      const t = performance.now();
+      const res = await instance.get(url);
+      logger.performance(`GET BLOB ${url}`, performance.now() - t);
+      return res.data;
+    } catch (err) {
+      if (typeof err === 'object' && err !== null && 'response' in err) {
+        const blob = (err as any).response?.data;
+        if (blob instanceof Blob) {
+          try {
+            const errorData = JSON.parse(await blob.text());
+            throw handleAxiosError({ ...err, response: { ...(err as any).response, data: errorData } }, url, 'GET');
+          } catch { throw new ApiError('Failed to download file', 500); }
+        }
+      }
+      throw handleAxiosError(err, url, 'GET');
     }
   }
 }
-

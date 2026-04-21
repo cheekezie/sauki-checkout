@@ -12,17 +12,17 @@ export function ComponentLoading({ size = 'md', className = '', fullScreen = fal
   };
 
   const containerClasses = fullScreen
-    ? 'fixed inset-0 flex items-center justify-center w-full h-full bg-gray-50/50 backdrop-blur-sm z-50'
-    : 'absolute inset-0 flex items-center justify-center w-full h-full min-h-screen';
+    ? 'fixed inset-0 flex items-center justify-center w-full h-full bg-border-50/50 backdrop-blur-sm z-50'
+    : 'flex items-center justify-center w-full min-h-[320px] py-8';
 
   return (
     <div className={`${containerClasses} ${className}`}>
       <div
         className={`${sizeClasses[size]} border-4 border-secondary/20 border-t-secondary rounded-full animate-spin`}
-        role="status"
-        aria-label="Loading"
+        role='status'
+        aria-label='Loading'
       >
-        <span className="sr-only">Loading...</span>
+        <span className='sr-only'>Loading...</span>
       </div>
     </div>
   );
@@ -30,15 +30,14 @@ export function ComponentLoading({ size = 'md', className = '', fullScreen = fal
 
 export function PageLoading() {
   return (
-    <div className="fixed inset-0 flex items-center justify-center w-full h-full bg-gray-50">
+    <div className='fixed inset-0 flex items-center justify-center w-full h-full bg-border-50'>
       <div
-        className="w-12 h-12 border-4 border-secondary/20 border-t-secondary rounded-full animate-spin"
-        role="status"
-        aria-label="Loading"
+        className='w-12 h-12 border-4 border-secondary/20 border-t-secondary rounded-full animate-spin'
+        role='status'
+        aria-label='Loading'
       >
-        <span className="sr-only">Loading...</span>
+        <span className='sr-only'>Loading...</span>
       </div>
     </div>
   );
 }
-

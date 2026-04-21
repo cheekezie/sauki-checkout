@@ -127,3 +127,15 @@ body {
 button {
   cursor: pointer;
 }
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+@keyframes progress {
+  0%   { margin-left: -40%; width: 40%; }
+  50%  { margin-left: 60%; width: 40%; }
+  100% { margin-left: 110%; width: 40%; }
+}

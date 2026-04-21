@@ -1,65 +1,87 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useState } from "react";
-import type { ReactNode } from "react";
-import { isUnauthorizedError } from "@/utils/errorHandler";
+import { QueryClient, QueryClientProvider, QueryCache, MutationCache } from '@tanstack/react-query';
+import { useState } from 'react';
+import type { ReactNode } from 'react';
+import { isUnauthorizedError } from '@/utils/errorHandler';
+import { notify } from '@/utils/alert-bridge';
+
+let lastErrorMessage: string | null = null;
+let lastErrorTime = 0;
+
+const SHOULD_DEDUPE_WITHIN_MS = 3000;
+
+const shouldShowError = (message: string) => {
+  const now = Date.now();
+  if (message === lastErrorMessage && now - lastErrorTime < SHOULD_DEDUPE_WITHIN_MS) {
+    return false;
+  }
+  lastErrorMessage = message;
+  lastErrorTime = now;
+  return true;
+};
 
 interface ReactQueryProviderProps {
   children: ReactNode;
 }
 
-/**
- * Optimized React Query Provider with default configuration
- * - Prevents unnecessary refetches on window focus
- * - Configures appropriate stale and garbage collection times
- * - Reduces API calls by using cache effectively
- * - Filters out 401 errors globally (handled by auth error handler)
- */
-export default function ReactQueryProvider({
-  children,
-}: ReactQueryProviderProps) {
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            // Data stays fresh for 5 minutes by default
-            staleTime: 1000 * 60 * 5, // 5 minutes
+export default function ReactQueryProvider({ children }: ReactQueryProviderProps) {
+  const [queryClient] = useState(() => {
+    const showAlert = (payload: { type: 'error' | 'success'; title: string; message: string }) => {
+      notify.snackbar({
+        type: 'error',
+        title: payload.title,
+        message: payload.message,
+      });
+    };
 
-            // Cache data for 30 minutes before garbage collection
-            gcTime: 1000 * 60 * 30, // 30 minutes (was cacheTime in v4)
+    return new QueryClient({
+      queryCache: new QueryCache({
+        onError: (error, query) => {
+          if (isUnauthorizedError(error)) return;
 
-            // Retry failed requests twice
-            retry: 2,
+          const meta: any = query.meta ?? {};
+          const toastCfg = meta.toastError ?? true;
 
-            // Prevent unnecessary refetches on window focus
-            refetchOnWindowFocus: false,
+          if (toastCfg === false) return;
 
-            // Refetch on network reconnect (user comes back online)
-            refetchOnReconnect: true,
+          const title = typeof toastCfg === 'object' && toastCfg.title ? toastCfg.title : 'Request failed';
+          const message = typeof toastCfg === 'object' && toastCfg.message ? toastCfg.message : error.message;
 
-            // Don't refetch if data already exists in cache
-            refetchOnMount: false,
-
-            // Don't treat 401 errors as query errors (they're handled globally)
-            throwOnError: (error) => {
-              // Return false for 401 errors so they don't trigger error state
-              // The global auth error handler will handle them
-              return !isUnauthorizedError(error);
-            },
-          },
-          mutations: {
-            // Don't treat 401 errors as mutation errors (they're handled globally)
-            throwOnError: (error) => {
-              return !isUnauthorizedError(error);
-            },
-          },
+          showAlert({ type: 'error', title, message });
         },
-      })
-  );
+      }),
 
-  return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
+      mutationCache: new MutationCache({
+        onError: (error, _variables, _ctx, mutation) => {
+          if (isUnauthorizedError(error)) return;
+
+          const meta: any = mutation.meta ?? {};
+          const toastCfg = meta.toastError ?? true;
+
+          if (toastCfg === false) return;
+
+          const title = typeof toastCfg === 'object' && toastCfg.title ? toastCfg.title : 'Request failed';
+          const message = typeof toastCfg === 'object' && toastCfg.message ? toastCfg.message : error.message;
+
+          showAlert({ type: 'error', title, message });
+        },
+      }),
+
+      defaultOptions: {
+        queries: {
+          staleTime: 1000 * 60 * 5,
+          gcTime: 1000 * 60 * 30,
+          retry: 2,
+          refetchOnWindowFocus: false,
+          refetchOnReconnect: true,
+          refetchOnMount: false,
+          throwOnError: false, // ✅ keep false
+        },
+        mutations: {
+          throwOnError: false, // ✅ keep false
+        },
+      },
+    });
+  });
+
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 }
-
-

@@ -12,3 +12,29 @@ export function formatCurrency(amount: number): string {
   }).format(amount);
 }
 
+
+
+/**
+ * Currency symbols map - centralized for consistency
+ */
+const CURRENCY_SYMBOLS: Record<string, string> = {
+  NGN: '₦',
+  USD: '$',
+  GBP: '£',
+  EUR: '€',
+  GHS: '₵',
+  KES: 'KSh',
+  ZAR: 'R',
+  CAD: 'C$',
+  AUD: 'A$',
+  JPY: '¥',
+  CNY: '¥',
+};
+
+export function formatCurrencyWithSymbol(
+  amount = 0,
+  currencyCode: string = 'NGN'
+): string {
+  const symbol = CURRENCY_SYMBOLS[currencyCode] || currencyCode;
+  return `${symbol}${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}

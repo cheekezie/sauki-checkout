@@ -22,6 +22,7 @@ export interface InputProps {
   expiryDate?: boolean;
   allowedChars?: string[];
   inputClassName?: string;
+  autoComplete?: string;
 }
 
 // Textarea Component
@@ -78,7 +79,9 @@ export interface SelectProps {
   value: string;
   onChange: (value: string) => void;
   onBlur?: () => void;
-  options: readonly SelectOption[];
+  options: readonly Record<string, any>[];
+  labelKey?: string;
+  valueKey?: string;
   placeholder?: string;
   icon?: LucideIcon;
   required?: boolean;

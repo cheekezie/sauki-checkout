@@ -8,6 +8,8 @@ const Select = ({
   onChange,
   onBlur,
   options,
+  labelKey = 'label',
+  valueKey = 'value',
   placeholder = "-- Please select --",
   icon: Icon,
   required = false,
@@ -56,8 +58,8 @@ const Select = ({
         >
           <option key="placeholder" value="">{placeholder}</option>
           {options.map((option, index) => (
-            <option key={option.value || `option-${index}`} value={option.value}>
-              {option.label}
+            <option key={option[valueKey] ?? `option-${index}`} value={option[valueKey]}>
+              {option[labelKey]}
             </option>
           ))}
         </select>

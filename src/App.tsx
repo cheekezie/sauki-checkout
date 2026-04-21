@@ -7,6 +7,8 @@ import ModalContainer from './components/modals/ModalContainer';
 import { ComponentLoading } from './components/ui/LoadingSpinner';
 import { GlobalErrorProvider, ModalProvider, ToastProvider } from './contexts';
 import ReactQueryProvider from './providers/ReactQueryProvider';
+import { AlertProvider } from './contexts/AlertProvider';
+import { AlertBridge } from './utils/alert-bridge';
 
 // Lazy load all page components for code splitting
 const Checkout = React.lazy(() => import('./features/checkout'));
@@ -25,33 +27,36 @@ function App() {
     <ErrorBoundary>
       <GlobalErrorProvider>
         <Router>
-          <ToastProvider>
-            <ModalProvider>
-              <ReactQueryProvider>
-                <Routes>
-                  <Route
-                    path='/'
-                    element={
-                      <LazyRoute>
-                        <Checkout />
-                      </LazyRoute>
-                    }
-                  />
+          <AlertProvider>
+            <AlertBridge />
+            <ToastProvider>
+              <ModalProvider>
+                <ReactQueryProvider>
+                  <Routes>
+                    <Route
+                      path='/:ref'
+                      element={
+                        <LazyRoute>
+                          <Checkout />
+                        </LazyRoute>
+                      }
+                    />
 
-                  {/* Catch-all for other Wildcard routes */}
-                  <Route
-                    path='*'
-                    element={
-                      <LazyRoute>
-                        <NotFound />
-                      </LazyRoute>
-                    }
-                  />
-                </Routes>
-                <ModalContainer />
-              </ReactQueryProvider>
-            </ModalProvider>
-          </ToastProvider>
+                    {/* Catch-all for other Wildcard routes */}
+                    <Route
+                      path='*'
+                      element={
+                        <LazyRoute>
+                          <NotFound />
+                        </LazyRoute>
+                      }
+                    />
+                  </Routes>
+                  <ModalContainer />
+                </ReactQueryProvider>
+              </ModalProvider>
+            </ToastProvider>
+          </AlertProvider>
         </Router>
       </GlobalErrorProvider>
     </ErrorBoundary>
