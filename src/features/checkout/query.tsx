@@ -42,8 +42,6 @@ export const useInitiateUssdPayment = () => {
     mutationFn: (payload: UssdPayloadI) => api.initiateUssdPayment(payload),
     meta: { toastError: false },
     onError: (err) => {
-      console.log('err:', err);
-
       notify.modal({
         type: 'error',
         title: 'Request failed',

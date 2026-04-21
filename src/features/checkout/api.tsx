@@ -38,7 +38,10 @@ class CheckoutApiService {
   }
 
   async initiateUssdPayment(data: UssdPayloadI) {
-    return RequestService.post<any>('/transaction/checkout/ussd-init', data);
+    return RequestService.post<{ status: boolean; supportMessage: string; transID: string; ussdCode: string }>(
+      '/transaction/checkout/ussd-init',
+      data,
+    );
   }
 
   async initiatePayment(data: any) {
