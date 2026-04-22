@@ -1,10 +1,10 @@
 import { LogoDark } from '@/assets';
-import CardDetails from '@/components/Payment/CardDetails';
-import TransferInstructions from '@/components/Payment/TransferInstructions';
-import UssdCode from '@/components/Payment/UssdCode';
+import CardDetails from '@/features/checkout/components/CardDetails';
+import TransferInstructions from '@/features/checkout/components/TransferInstructions';
+import UssdCode from '@/features/checkout/components/UssdCode';
+import { formatCurrencyWithSymbol } from '@/utils/formatCurrency';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  ChevronDown,
   CreditCard,
   Hash,
   Landmark,
@@ -16,11 +16,9 @@ import {
   X,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { useGetBankList, useGetCheckoutData, useInitiatePayment } from './query';
-import { ComponentLoading } from '@/components/ui';
+import { useNavigate, useParams } from 'react-router-dom';
 import CheckoutSkeleton from './components/skeleton';
-import { formatCurrencyWithSymbol } from '@/utils/formatCurrency';
+import { useGetCheckoutData } from './query';
 
 const ALL_PAYMENT_OPTIONS = [
   { option: 'card', icon: CreditCard, title: 'Debit Card', stage: '', methodKey: 'cards' },
@@ -35,6 +33,15 @@ type MethodKey = 'cards' | 'transfers' | 'ussd' | 'mobileMoney';
 
 export default function Checkout() {
   const { ref = '' } = useParams<{ ref: string }>();
+  const navigate = useNavigate();
+
+  const handleClose = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      window.location.href = 'https://www.saukipay.net';
+    }
+  };
 
   const { data, isPending } = useGetCheckoutData(ref);
 
@@ -110,13 +117,9 @@ export default function Checkout() {
                 <div className='bg-white p-8'>
                   <div className='flex justify-between items-center mb-8'>
                     <div>
-                      <img
-                        src='https://dts8gjj8w0ppb.cloudfront.net/7L6UL998/logo/1689430025472-532362.png'
-                        alt='Business Logo'
-                        className='w-6'
-                      />
+                      {data?.businessLogo && <img src={data.businessLogo} alt='Business Logo' className='w-6' />}
                     </div>
-                    <button className='text-xl text-dark'>Close</button>
+                    <button onClick={handleClose} className='text-xl text-dark'>Close</button>
                   </div>
                   <h2 className='text-dark mb-4 text-base'>Payment Summary</h2>
                   <p className='text-gray text-xsm'>
@@ -153,10 +156,29 @@ export default function Checkout() {
                         transition={{ duration: 0.2, ease: 'easeInOut' }}
                       >
                         <div>
-                          {activeOption === 'card' && <CardDetails amount={2000} />}
-                          {activeOption === 'transfer' && <TransferInstructions amount={2000} />}
+                          {activeOption === 'card' && (
+                            <CardDetails
+                              amount={data?.amount ?? 0}
+                              transactionId={data?.transID ?? ''}
+                              merchant={data?.businessName}
+                              onBack={() => setSelectedOption('')}
+                            />
+                          )}
+                          {activeOption === 'transfer' && (
+                            <TransferInstructions
+                              amount={data?.amount ?? 0}
+                              transactionId={data?.transID ?? ''}
+                              merchant={data?.businessName}
+                              onBack={() => setSelectedOption('')}
+                            />
+                          )}
                           {activeOption === 'ussd' && (
-                            <UssdCode amount={data?.amount ?? 0} transactionId={data?.transID ?? ''} />
+                            <UssdCode
+                              amount={data?.amount ?? 0}
+                              transactionId={data?.transID ?? ''}
+                              merchant={data?.businessName}
+                              onBack={() => setSelectedOption('')}
+                            />
                           )}
                         </div>
                       </motion.div>

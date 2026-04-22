@@ -12,6 +12,7 @@ import { AlertBridge } from './utils/alert-bridge';
 
 // Lazy load all page components for code splitting
 const Checkout = React.lazy(() => import('./features/checkout'));
+const StatusPage = React.lazy(() => import('./features/checkout/components/StatusPage'));
 
 const NotFound = React.lazy(() => import('./features/NotFound'));
 
@@ -38,6 +39,14 @@ function App() {
                       element={
                         <LazyRoute>
                           <Checkout />
+                        </LazyRoute>
+                      }
+                    />
+                    <Route
+                      path='/:ref/status'
+                      element={
+                        <LazyRoute>
+                          <StatusPage />
                         </LazyRoute>
                       }
                     />

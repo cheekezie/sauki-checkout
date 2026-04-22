@@ -1,6 +1,6 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
-import api, { type UssdPayloadI } from './api';
 import { notify } from '@/utils/alert-bridge';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import api, { type CardPayloadI, type ChekoutDemoPayloadI, type UssdPayloadI } from './api';
 
 export const useGetCheckoutData = (ref: string) => {
   return useQuery({
@@ -18,14 +18,10 @@ export const useGetBankList = () => {
   });
 };
 
-export const useInitiatePayment = () => {
+export const useProcessCheckoutDemo = () => {
   return useMutation({
-    mutationFn: (payload) => api.initiatePayment(payload),
+    mutationFn: (payload: ChekoutDemoPayloadI) => api.processChekoutDemo(payload),
     meta: { toastError: false },
-    onSuccess: (res) => {
-      const url = res.data.checkoutData.checkout;
-      if (url) window.open(url, '_blank');
-    },
 
     onError: (err) => {
       notify.modal({
@@ -41,11 +37,63 @@ export const useInitiateUssdPayment = () => {
   return useMutation({
     mutationFn: (payload: UssdPayloadI) => api.initiateUssdPayment(payload),
     meta: { toastError: false },
+  });
+};
+
+export const useInitiateTransferPayment = (transactionId: string) => {
+  return useQuery({
+    queryKey: ['transfer-init', transactionId],
+    queryFn: () => api.initiateTransferPayment(transactionId),
+    meta: { toastError: false },
+    select: ({ data }) => data,
+    enabled: !!transactionId,
+  });
+};
+
+export const useInitiateCardPayment = () => {
+  return useMutation({
+    mutationFn: (payload: CardPayloadI) => api.initiateCardPayment(payload),
+    meta: { toastError: false },
+  });
+};
+
+export const useCheckUssdStatus = () => {
+  return useMutation({
+    mutationFn: (transID: string) => api.checkUssdStatus(transID),
+    meta: { toastError: false },
     onError: (err) => {
       notify.modal({
         type: 'error',
         title: 'Request failed',
-        message: err?.message ?? 'Failed to initiate payment',
+        message: err?.message ?? 'Failed to check payment status',
+      });
+    },
+  });
+};
+
+export const useCheckTransferStatus = () => {
+  return useMutation({
+    mutationFn: (transID: string) => api.checkTransferStatus(transID),
+    meta: { toastError: false },
+    onError: (err) => {
+      notify.modal({
+        type: 'error',
+        title: 'Request failed',
+        message: err?.message ?? 'Failed to check payment status',
+      });
+    },
+  });
+};
+
+export const useCheckCard3dsStatus = () => {
+  return useMutation({
+    mutationFn: (data: { transID: string; otp: string }) => api.checkCard3dsStatus(data),
+    meta: { toastError: false },
+    onError: (err) => {
+      notify.modal({
+        type: 'error',
+        title: 'Request failed',
+        message: err?.message ?? 'Failed to check payment status',
       });
     },
   });

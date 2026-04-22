@@ -23,6 +23,7 @@ export interface InputProps {
   allowedChars?: string[];
   inputClassName?: string;
   autoComplete?: string;
+  rightElement?: ReactNode;
 }
 
 // Textarea Component

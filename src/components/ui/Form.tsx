@@ -6,12 +6,14 @@ interface prop {
   className?: string;
   isValid?: boolean;
   onSubmit: (ev: React.FormEvent) => void;
+  onInvalid?: () => void;
 }
-const Form = ({ children, onSubmit, isValid, className }: prop) => {
+const Form = ({ children, onSubmit, isValid, onInvalid, className }: prop) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (isValid === false) {
+      onInvalid?.();
       return;
     }
 

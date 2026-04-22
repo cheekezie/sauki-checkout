@@ -51,12 +51,12 @@ class LoggerService {
 
   apiError(endpoint: string, method: string, error: any): void {
     if (this.shouldLog('error')) {
-      console.error(`[API ERROR] ${method.toUpperCase()} ${endpoint}`, {
-        message: error.message,
-        status: error.status,
-        statusCode: error.statusCode,
-        response: error.response?.data,
-      });
+      // console.error(`[API ERROR] ${method.toUpperCase()} ${endpoint}`, {
+      //   message: error.message,
+      //   status: error.status,
+      //   statusCode: error.statusCode,
+      //   response: error.response?.data,
+      // });
     }
   }
 

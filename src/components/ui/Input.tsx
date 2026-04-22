@@ -21,6 +21,7 @@ const Input = ({
   autoComplete,
   className = '',
   inputClassName = '',
+  rightElement,
 }: InputProps) => {
   const [isFocused, setIsFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -39,7 +40,7 @@ const Input = ({
     }
 
     if (name === 'cardNumber') {
-      const digits = newValue.replace(/\D/g, '').slice(0, 16);
+      const digits = newValue.replace(/\D/g, '').slice(0, 19);
       newValue = digits.replace(/(.{4})/g, '$1 ').trimEnd();
       onChange(newValue);
       return;
@@ -104,7 +105,7 @@ const Input = ({
             w-full rounded-lg border px-4 py-3 text-sm transition-all duration-200
             focus:outline-none focus:ring-2 focus:ring-primary
             ${Icon ? 'pl-12' : 'pl-4'}
-            ${type === 'password' ? 'pr-12' : ''}
+            ${type === 'password' || rightElement ? 'pr-12' : ''}
             ${error ? 'border-red-500 focus:ring-red-500' : isFocused ? 'border-primary' : 'border-gray-300'}
             ${disabled ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}
             ${inputClassName}
@@ -113,6 +114,12 @@ const Input = ({
 
         {Icon && (
           <Icon className='absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none' />
+        )}
+
+        {rightElement && (
+          <div className='absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none'>
+            {rightElement}
+          </div>
         )}
 
         {type === 'password' && (
