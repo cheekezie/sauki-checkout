@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 export interface CheckoutStatusState {
-  status: 'success' | 'fail';
+  status: string;
   amount?: number;
   merchant?: string;
   redirectUrl?: string;

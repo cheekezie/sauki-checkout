@@ -1,4 +1,5 @@
 import type { CheckoutStatusState } from '@/features/checkout/components/StatusPage';
+import { object } from 'joi';
 import { useNavigate, useParams } from 'react-router-dom';
 
 interface VerificationMeta {
@@ -18,17 +19,60 @@ interface StatusResponse {
   };
 }
 
+const parseUrlData = (input: string) => {
+  if (!input) {
+    return {
+      hasValidBaseUrl: false,
+      base: null,
+      params: {},
+    };
+  }
+
+
+  const [base, queryString] = input.split('?');
+
+  // check if base is a valid URL
+  let hasValidBaseUrl = false;
+
+  try {
+    if (base && base !== 'null') {
+      new URL(base);
+      hasValidBaseUrl = true;
+    }
+  } catch {
+    hasValidBaseUrl = false;
+  }
+
+  // parse query params
+  const params = queryString
+    ? Object.fromEntries(new URLSearchParams(queryString).entries())
+    : {};
+
+  return {
+    hasValidBaseUrl,
+    base: hasValidBaseUrl ? base : null,
+    params,
+  };
+}
+
 export function usePaymentVerification(meta: VerificationMeta = {}) {
   const navigate = useNavigate();
   const { ref } = useParams<{ ref: string }>();
-  const verify = (res: StatusResponse): PaymentStatus => {
+  const verify = (res: StatusResponse) => {
     const status = res.data.paymentStatus;
-    if (status === 'success' || status === 'fail') {
+
+    const redirectUrl = res.data.redirectUrl ?? '';
+    const { params, hasValidBaseUrl } = parseUrlData(redirectUrl);
+    const paramStatus = params?.status
+    console.log({ params, hasValidBaseUrl, paramStatus });
+
+    const allowed = ['success', 'fail'];
+    if (allowed.includes(status) || paramStatus === 'fail') {
       const state: CheckoutStatusState = {
-        status,
+        status: status ?? paramStatus,
         amount: meta.amount,
         merchant: meta.merchant,
-        redirectUrl: res.data.redirectUrl ?? meta.redirectUrl,
+        redirectUrl: hasValidBaseUrl ? redirectUrl : '',
       };
       navigate(`/${ref}/status`, { state });
     }

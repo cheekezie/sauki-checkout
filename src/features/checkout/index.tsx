@@ -119,12 +119,13 @@ export default function Checkout() {
                     <div>
                       {data?.businessLogo && <img src={data.businessLogo} alt='Business Logo' className='w-6' />}
                     </div>
-                    <button onClick={handleClose} className='text-xl text-dark'>Close</button>
+                    <button onClick={handleClose} className='text-xl text-dark'>
+                      Close
+                    </button>
                   </div>
                   <h2 className='text-dark mb-4 text-base'>Payment Summary</h2>
                   <p className='text-gray text-xsm'>
-                    Below is a summary of the charges for this transaction. Please confirm the details before making
-                    payment
+                    Below is a summary for this transaction. Please confirm the details before making payment
                   </p>
                   <div className='border border-gray-light mt-4.5' />
                   <div className='my-4.5'>
