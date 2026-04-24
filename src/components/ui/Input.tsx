@@ -31,7 +31,7 @@ const Input = ({
 
     if (expiryDate) {
       let input = e.target.value.replace(/\D/g, '');
-      if (input.length > 6) input = input.slice(0, 6);
+      if (input.length > 4) input = input.slice(0, 4);
       if (input.length >= 3) {
         input = `${input.slice(0, 2)} / ${input.slice(2)}`;
       }

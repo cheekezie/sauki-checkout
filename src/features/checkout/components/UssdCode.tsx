@@ -1,33 +1,41 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, ComponentLoading, Select } from '../../../components/ui';
-import { Check, Clock, Copy, Info, Landmark } from 'lucide-react';
+import { Check, Copy, Info, Landmark } from 'lucide-react';
 import { useCheckUssdStatus, useGetBankList, useInitiateUssdPayment } from '@/features/checkout/query';
 import { usePaymentVerification } from '@/hooks/usePaymentVerification';
-import { AnimatePresence, motion } from 'framer-motion';
 import PendingBanner from './PendingBanner';
 import ErrorBanner from './ErrorBanner';
+import DemoPanel from './demo/DemoPanel';
 
 interface prop {
   amount: number;
   transactionId: string;
   merchant?: string;
+  customer?: string;
   onBack?: () => void;
 }
 
 const PENDING_BANNER_DURATION = 6000;
 
-const UssdCode = ({ amount, transactionId, merchant, onBack }: prop) => {
+const UssdCode = ({ amount, transactionId, merchant, customer, onBack }: prop) => {
   const [code, setCode] = useState('');
   const [bank, setBank] = useState('');
   const [message, setMessage] = useState('');
   const [copied, setCopied] = useState(false);
   const [showPending, setShowPending] = useState(false);
   const pendingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const ussdCache = useRef<Map<string, { code: string; message: string }>>(new Map());
 
-  const { data, isPending: isLoadingBanks, isError: bankError } = useGetBankList();
-  const { mutateAsync: mutateUssd, isPending: initiating, isError: initError, error, reset: resetUssd } = useInitiateUssdPayment();
+  const { data, isPending: isLoadingBanks } = useGetBankList();
+  const {
+    mutateAsync: mutateUssd,
+    isPending: initiating,
+    isError: initError,
+    error,
+    reset: resetUssd,
+  } = useInitiateUssdPayment();
   const { mutateAsync: mutateCheckStatus, isPending: checking } = useCheckUssdStatus();
-  const { verify } = usePaymentVerification({ amount, merchant });
+  const { verify } = usePaymentVerification({ amount, merchant, customer });
 
   const copyCode = async () => {
     await navigator.clipboard.writeText(code);
@@ -37,6 +45,14 @@ const UssdCode = ({ amount, transactionId, merchant, onBack }: prop) => {
 
   const bankChanged = async (val: string) => {
     setBank(val);
+
+    const cached = ussdCache.current.get(val);
+    if (cached) {
+      setCode(cached.code);
+      setMessage(cached.message);
+      return;
+    }
+
     const selected = data?.find((d) => d.code === val);
     const res = await mutateUssd({
       bankCode: val,
@@ -47,6 +63,7 @@ const UssdCode = ({ amount, transactionId, merchant, onBack }: prop) => {
     if (res.data.status) {
       setCode(res.data.ussdCode);
       setMessage(res.data.supportMessage);
+      ussdCache.current.set(val, { code: res.data.ussdCode, message: res.data.supportMessage });
     }
   };
 

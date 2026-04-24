@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 interface VerificationMeta {
   amount?: number;
   merchant?: string;
+  customer?: string;
   redirectUrl?: string;
 }
 
@@ -59,22 +60,49 @@ export function usePaymentVerification(meta: VerificationMeta = {}) {
   const navigate = useNavigate();
   const { ref } = useParams<{ ref: string }>();
   const verify = (res: StatusResponse) => {
-    const status = res.data.paymentStatus;
 
     const redirectUrl = res.data.redirectUrl ?? '';
     const { params, hasValidBaseUrl } = parseUrlData(redirectUrl);
-    const paramStatus = params?.status
-    console.log({ params, hasValidBaseUrl, paramStatus });
+    const paramStatus = params?.status ?? '';
+    const status = (res.data.paymentStatus ?? paramStatus ?? '').toLowerCase();
 
-    const allowed = ['success', 'fail'];
-    if (allowed.includes(status) || paramStatus === 'fail') {
+    if (status === 'success' || status === 'fail') {
       const state: CheckoutStatusState = {
-        status: status ?? paramStatus,
+        status,
         amount: meta.amount,
         merchant: meta.merchant,
+        customer: meta.customer,
         redirectUrl: hasValidBaseUrl ? redirectUrl : '',
       };
-      navigate(`/${ref}/status`, { state });
+      navigate(`/status/${ref}`, { state });
+    }
+
+    return status;
+  };
+
+  return { verify };
+}
+
+// Alternative verification that allows only success to go through to status
+export function usePaymentVerificationAlt(meta: VerificationMeta = {}) {
+  const navigate = useNavigate();
+  const { ref } = useParams<{ ref: string }>();
+  const verify = (res: StatusResponse) => {
+
+    const redirectUrl = res.data.redirectUrl ?? '';
+    const { params, hasValidBaseUrl } = parseUrlData(redirectUrl);
+    const paramStatus = params?.status ?? '';
+    const status = (res.data.paymentStatus ?? paramStatus ?? '').toLowerCase();
+
+    if (status === 'success') {
+      const state: CheckoutStatusState = {
+        status: status,
+        amount: meta.amount,
+        merchant: meta.merchant,
+        customer: meta.customer,
+        redirectUrl: hasValidBaseUrl ? redirectUrl : '',
+      };
+      navigate(`/status/${ref}`, { state });
     }
 
     return status;

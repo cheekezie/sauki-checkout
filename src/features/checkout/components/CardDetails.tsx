@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useFormValidation } from '@/hooks';
 import { useCheckCard3dsStatus, useInitiateCardPayment } from '@/features/checkout/query';
-import { usePaymentVerification } from '@/hooks/usePaymentVerification';
+import { usePaymentVerification, usePaymentVerificationAlt } from '@/hooks/usePaymentVerification';
 import { Calendar, CreditCardIcon, KeyRound, Lock } from 'lucide-react';
 import CardBrandBadge from './CardBrandBadge';
 import { detectCardType } from '@/utils/cardDetection';
@@ -10,25 +10,28 @@ import Form from '../../../components/ui/Form';
 import { formatCurrencyWithSymbol } from '@/utils/formatCurrency';
 import PendingBanner from './PendingBanner';
 import ErrorBanner from './ErrorBanner';
+import DemoPanel from './demo/DemoPanel';
 
 interface props {
   amount: number;
   transactionId: string;
   merchant?: string;
-  onBack?: () => void;
+  customer?: string;
+  onBack?: (method: string) => void;
 }
 
 const PENDING_BANNER_DURATION = 10;
 
-const CardDetails = ({ amount, transactionId, merchant, onBack }: props) => {
+const CardDetails = ({ amount, transactionId, merchant, customer, onBack }: props) => {
   const [view, setView] = useState<'card' | 'otp'>('card');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [submitAttempted, setSubmitAttempted] = useState(false);
+  const [verificationError, setVerificationError] = useState('');
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [showPending, setShowPending] = useState(false);
   const pendingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const { formData, isValid, errors, updateField } = useFormValidation({
+  const { formData, isValid, errors, updateField, setFormData } = useFormValidation({
     cardNumber: '',
     expiry: '',
     cvv: '',
@@ -43,7 +46,7 @@ const CardDetails = ({ amount, transactionId, merchant, onBack }: props) => {
     reset: resetInit,
   } = useInitiateCardPayment();
   const { mutateAsync: checkCard3ds, isPending: verifying } = useCheckCard3dsStatus();
-  const { verify } = usePaymentVerification({ amount, merchant });
+  const { verify } = usePaymentVerificationAlt({ amount, merchant, customer });
 
   const requiredError = (field: keyof typeof formData, label: string) => {
     if (submitAttempted && !formData[field]) return `${label} is required`;
@@ -57,14 +60,13 @@ const CardDetails = ({ amount, transactionId, merchant, onBack }: props) => {
     const month = parseInt(mm, 10);
     const year = parseInt(yyyy, 10);
     if (mm.length === 2 && month > 12) return 'Month must be between 01 and 12';
-    if (yyyy?.length === 4 && year < new Date().getFullYear()) return 'Card has expired';
+    if (yyyy?.length === 2 && year < new Date().getFullYear() % 100) return 'Card has expired';
     return errors.expiry;
   };
 
   const handleCardSubmit = async () => {
     const rawNumber = (formData.cardNumber as string).replace(/\s/g, '');
-    const [expiryMonth = '', year = ''] = (formData.expiry as string).split('/').map((s) => s.trim());
-    const expiryYear = year.slice(-2); // "26"
+    const [expiryMonth = '', expiryYear = ''] = (formData.expiry as string).split('/').map((s) => s.trim());
 
     const res = await initCardPayment({
       number: rawNumber,
@@ -106,7 +108,15 @@ const CardDetails = ({ amount, transactionId, merchant, onBack }: props) => {
   const handleOtpSubmit = async () => {
     const res = await checkCard3ds({ transID: transactionId, otp: otp.join('') });
     const status = verify(res);
+
     if (status === 'pending') triggerPendingBanner();
+    if (status === 'fail') triggerVerificationError(res.message);
+  };
+
+  const triggerVerificationError = (message: string) => {
+    setVerificationError(
+      message ?? 'Unable to complete transaction. Check the information you have provdided and try again',
+    );
   };
 
   const triggerPendingBanner = () => {
@@ -122,17 +132,36 @@ const CardDetails = ({ amount, transactionId, merchant, onBack }: props) => {
     [],
   );
 
+  const changeMethod = () => {
+    onBack?.('transfer');
+  };
+
   const otpComplete = otp.every((d) => d !== '');
 
+  // Show when there is error initializing card payment
   if (initError) {
     return (
       <ErrorBanner
         message={error.message}
         onRetry={() => {
           resetInit();
+          setVerificationError('');
           setSubmitAttempted(false);
         }}
-        onBack={onBack}
+        onBack={changeMethod}
+      />
+    );
+  }
+
+  // When tere is card verification error
+  if (!!verificationError) {
+    return (
+      <ErrorBanner
+        message={verificationError}
+        onRetry={() => {
+          setVerificationError('');
+        }}
+        onBack={changeMethod}
       />
     );
   }

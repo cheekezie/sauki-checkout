@@ -43,7 +43,7 @@ function App() {
                       }
                     />
                     <Route
-                      path='/:ref/status'
+                      path='/status/:ref'
                       element={
                         <LazyRoute>
                           <StatusPage />

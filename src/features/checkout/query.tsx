@@ -47,6 +47,8 @@ export const useInitiateTransferPayment = (transactionId: string) => {
     meta: { toastError: false },
     select: ({ data }) => data,
     enabled: !!transactionId,
+    staleTime: Infinity,
+    retry: false,
   });
 };
 

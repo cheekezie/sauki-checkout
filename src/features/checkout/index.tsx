@@ -2,6 +2,9 @@ import { LogoDark } from '@/assets';
 import CardDetails from '@/features/checkout/components/CardDetails';
 import TransferInstructions from '@/features/checkout/components/TransferInstructions';
 import UssdCode from '@/features/checkout/components/UssdCode';
+import DemoCard from '@/features/checkout/components/demo/DemoCard';
+import DemoTransfer from '@/features/checkout/components/demo/DemoTransfer';
+import DemoUssd from '@/features/checkout/components/demo/DemoUssd';
 import { formatCurrencyWithSymbol } from '@/utils/formatCurrency';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -50,13 +53,18 @@ export default function Checkout() {
   const paymentOptions = useMemo(() => {
     const methods = data?.paymentMethods;
 
-    if (methods) {
-      methods.ussd = true;
-    }
+    // if (methods) {
+    //   methods.ussd = true;
+    // }
+    // if (data?.environment) {
+    //   data.environment = 'demo';
+    // }
+
     if (!methods) return [];
     return ALL_PAYMENT_OPTIONS.filter((opt) => opt.methodKey !== null && methods[opt.methodKey as MethodKey] === true);
   }, [data]);
 
+  const isDemoMode = data?.environment !== 'live';
   const firstOption = paymentOptions[0]?.option ?? '';
   const [selectedOption, setSelectedOption] = useState('');
   const [showMethodPicker, setShowMethodPicker] = useState(false);
@@ -71,11 +79,12 @@ export default function Checkout() {
   if (isPending) {
     return <CheckoutSkeleton />;
   }
+
   return (
     <>
       {/* Checkout UI */}
       <section className='flex justify-center items-center min-h-screen px-6' style={{ backgroundColor: '#E5E5E5' }}>
-        <div className='mx-auto max-w-[733px] w-full mb-4'>
+        <div className='mx-auto max-w-[733px] w-full my-4'>
           <AnimatePresence>
             <motion.div
               initial={{ opacity: 0 }}
@@ -119,7 +128,7 @@ export default function Checkout() {
                     <div>
                       {data?.businessLogo && <img src={data.businessLogo} alt='Business Logo' className='w-6' />}
                     </div>
-                    <button onClick={handleClose} className='text-xl text-dark'>
+                    <button onClick={handleClose} className='text-md text-dark'>
                       Close
                     </button>
                   </div>
@@ -157,29 +166,63 @@ export default function Checkout() {
                         transition={{ duration: 0.2, ease: 'easeInOut' }}
                       >
                         <div>
-                          {activeOption === 'card' && (
-                            <CardDetails
-                              amount={data?.amount ?? 0}
-                              transactionId={data?.transID ?? ''}
-                              merchant={data?.businessName}
-                              onBack={() => setSelectedOption('')}
-                            />
-                          )}
-                          {activeOption === 'transfer' && (
-                            <TransferInstructions
-                              amount={data?.amount ?? 0}
-                              transactionId={data?.transID ?? ''}
-                              merchant={data?.businessName}
-                              onBack={() => setSelectedOption('')}
-                            />
-                          )}
-                          {activeOption === 'ussd' && (
-                            <UssdCode
-                              amount={data?.amount ?? 0}
-                              transactionId={data?.transID ?? ''}
-                              merchant={data?.businessName}
-                              onBack={() => setSelectedOption('')}
-                            />
+                          {isDemoMode ? (
+                            <>
+                              {activeOption === 'card' && (
+                                <DemoCard
+                                  amount={data?.amount ?? 0}
+                                  transactionId={data?.transID ?? ''}
+                                  merchant={data?.businessName}
+                                  customer={data?.customer}
+                                />
+                              )}
+                              {activeOption === 'transfer' && (
+                                <DemoTransfer
+                                  amount={data?.amount ?? 0}
+                                  transactionId={data?.transID ?? ''}
+                                  merchant={data?.businessName}
+                                  customer={data?.customer}
+                                />
+                              )}
+                              {activeOption === 'ussd' && (
+                                <DemoUssd
+                                  amount={data?.amount ?? 0}
+                                  transactionId={data?.transID ?? ''}
+                                  merchant={data?.businessName}
+                                  customer={data?.customer}
+                                />
+                              )}
+                            </>
+                          ) : (
+                            <>
+                              {activeOption === 'card' && (
+                                <CardDetails
+                                  amount={data?.amount ?? 0}
+                                  transactionId={data?.transID ?? ''}
+                                  merchant={data?.businessName}
+                                  customer={data?.customer}
+                                  onBack={(method) => setSelectedOption(method)}
+                                />
+                              )}
+                              {activeOption === 'transfer' && (
+                                <TransferInstructions
+                                  amount={data?.amount ?? 0}
+                                  transactionId={data?.transID ?? ''}
+                                  merchant={data?.businessName}
+                                  customer={data?.customer}
+                                  onBack={() => setSelectedOption('')}
+                                />
+                              )}
+                              {activeOption === 'ussd' && (
+                                <UssdCode
+                                  amount={data?.amount ?? 0}
+                                  transactionId={data?.transID ?? ''}
+                                  merchant={data?.businessName}
+                                  customer={data?.customer}
+                                  onBack={() => setSelectedOption('')}
+                                />
+                              )}
+                            </>
                           )}
                         </div>
                       </motion.div>
