@@ -3,7 +3,6 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
 
 import { ErrorBoundary } from './components/common/ErrorBoundary';
-import ModalContainer from './components/modals/ModalContainer';
 import { ComponentLoading } from './components/ui/LoadingSpinner';
 import { GlobalErrorProvider, ModalProvider, ToastProvider } from './contexts';
 import ReactQueryProvider from './providers/ReactQueryProvider';
@@ -61,7 +60,6 @@ function App() {
                       }
                     />
                   </Routes>
-                  <ModalContainer />
                 </ReactQueryProvider>
               </ModalProvider>
             </ToastProvider>

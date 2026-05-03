@@ -1,4 +1,4 @@
-type CardType =
+export type CardType =
   | 'visa'
   | 'mastercard'
   | 'amex'
