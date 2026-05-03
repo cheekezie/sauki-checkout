@@ -9,5 +9,8 @@ export default defineConfig({
     alias: {
       '@': '/src'
     }
-  }
+  },
+  optimizeDeps: {
+    include: ['socket.io-client'],
+  },
 });

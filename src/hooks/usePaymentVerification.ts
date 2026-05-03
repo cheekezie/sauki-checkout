@@ -1,4 +1,5 @@
 import type { CheckoutStatusState } from '@/features/checkout/components/StatusPage';
+import { clearTransferCache } from '@/utils/transferCache';
 import { object } from 'joi';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -74,6 +75,7 @@ export function usePaymentVerification(meta: VerificationMeta = {}) {
         customer: meta.customer,
         redirectUrl: hasValidBaseUrl ? redirectUrl : '',
       };
+      clearTransferCache(ref ?? '')
       navigate(`/status/${ref}`, { state });
     }
 

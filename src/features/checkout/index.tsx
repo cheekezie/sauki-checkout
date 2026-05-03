@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { clearTransferCache } from '@/utils/transferCache';
 import CheckoutSkeleton from './components/skeleton';
 import { useGetCheckoutData } from './query';
 
@@ -39,6 +40,7 @@ export default function Checkout() {
   const navigate = useNavigate();
 
   const handleClose = () => {
+    clearTransferCache(ref);
     if (window.history.length > 1) {
       navigate(-1);
     } else {
@@ -210,6 +212,7 @@ export default function Checkout() {
                                   transactionId={data?.transID ?? ''}
                                   merchant={data?.businessName}
                                   customer={data?.customer}
+                                  transactionRef={ref}
                                   onBack={() => setSelectedOption('')}
                                 />
                               )}

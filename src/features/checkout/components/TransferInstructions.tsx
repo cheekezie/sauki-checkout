@@ -1,18 +1,23 @@
-import { AlertTriangle, Check, Clock, Copy } from 'lucide-react';
-import { Button, ComponentLoading } from '../../../components/ui';
 import { useCheckTransferStatus, useInitiateTransferPayment } from '@/features/checkout/query';
 import { usePaymentVerification } from '@/hooks/usePaymentVerification';
-import { useEffect, useRef, useState } from 'react';
-import PendingBanner from './PendingBanner';
-import ErrorBanner from './ErrorBanner';
-import DemoPanel from './demo/DemoPanel';
+import { useTransferSocket } from '@/hooks/useTransferSocket';
 import { formatCurrency } from '@/utils/formatCurrency';
+import { clearTransferCache, getTransferCache, setTransferCache } from '@/utils/transferCache';
+import { Check, Clock, Copy } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button, ComponentLoading } from '../../../components/ui';
+import ErrorBanner from './ErrorBanner';
+import PaymentReceivedOverlay from './PaymentReceivedOverlay';
+import PendingBanner from './PendingBanner';
+import type { CheckoutStatusState } from './StatusPage';
 
 const PENDING_BANNER_DURATION = 6000;
 
 interface props {
   amount: number;
   transactionId: string;
+  transactionRef: string;
   merchant?: string;
   customer?: string;
   onBack?: () => void;
@@ -27,25 +32,49 @@ const formatTime = (secs: number) => {
   return `${m}:${s}`;
 };
 
-const TransferInstructions = ({ amount, transactionId, merchant, customer, onBack, expiryMinutes = 30 }: props) => {
+const TransferInstructions = ({
+  amount,
+  transactionId,
+  transactionRef,
+  merchant,
+  customer,
+  onBack,
+  expiryMinutes = 30,
+}: props) => {
+  const navigate = useNavigate();
+
   const { verify } = usePaymentVerification({ amount, merchant, customer });
+  const [showOverlay, setShowOverlay] = useState(false);
+  const pendingNavStateRef = useRef<CheckoutStatusState | null>(null);
   const [showPending, setShowPending] = useState(false);
+
+  useTransferSocket(transactionRef, { amount, merchant, customer }, (state) => {
+    pendingNavStateRef.current = state;
+    setShowOverlay(true);
+  });
   const [accCopied, setAccCopied] = useState(false);
   const [amountCopied, setAmountCopied] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(expiryMinutes * 60);
   const pendingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const cached = useRef(getTransferCache(transactionRef)).current;
+
   const {
-    data,
+    data: fetched,
     isPending: initiating,
     isFetching,
     error,
     isError,
     refetch,
-  } = useInitiateTransferPayment(transactionId);
+  } = useInitiateTransferPayment(cached ? '' : transactionId);
   const { mutateAsync: checkTransferStatus, isPending: checking } = useCheckTransferStatus();
 
+  const data = cached ?? fetched;
   const accountDetails = data?.bankDetails;
+
+  useEffect(() => {
+    if (fetched) setTransferCache(transactionRef, fetched, expiryMinutes);
+  }, [fetched]);
   const isExpired = secondsLeft <= 0;
 
   useEffect(() => {
@@ -73,7 +102,9 @@ const TransferInstructions = ({ amount, transactionId, merchant, customer, onBac
     setShowPending(false);
     const res = await checkTransferStatus(transactionId);
     const status = verify(res);
-    if (status === 'pending') triggerPendingBanner();
+    if (status === 'pending') {
+      triggerPendingBanner();
+    }
   };
 
   const copyAccount = async () => {
@@ -88,7 +119,7 @@ const TransferInstructions = ({ amount, transactionId, merchant, customer, onBac
     setTimeout(() => setAmountCopied(false), 2000);
   };
 
-  if (initiating || isFetching) {
+  if (!cached && (initiating || isFetching)) {
     return (
       <div className='flex justify-center py-8 items-center'>
         <ComponentLoading className='min-h-8!' />
@@ -96,8 +127,24 @@ const TransferInstructions = ({ amount, transactionId, merchant, customer, onBac
     );
   }
 
-  if (isError || (!initiating && !accountDetails)) {
+  if (!cached && (isError || !accountDetails)) {
     return <ErrorBanner onRetry={refetch} onBack={onBack} message={error?.message} />;
+  }
+
+  // Transfer Notification Widget
+  if (showOverlay) {
+    return (
+      <PaymentReceivedOverlay
+        visible
+        onComplete={() => {
+          const state = pendingNavStateRef.current;
+          if (state) {
+            clearTransferCache(transactionRef);
+            navigate(`/status/${transactionRef}`, { state });
+          }
+        }}
+      />
+    );
   }
 
   return (
