@@ -1,5 +1,4 @@
 import { RequestService } from '@/services';
-import { string } from 'joi';
 
 interface TransactionI {
   transID: string;
@@ -72,7 +71,7 @@ class CheckoutApiService {
       transID: string;
       ussdCode: string;
       redirectUrl: string;
-    }>('/transaction/checkout/ussd-init', data);
+    }>('/transaction/checkout/ussd-init', data, false, false);
   }
 
   async initiateCardPayment(data: CardPayloadI) {
@@ -82,7 +81,7 @@ class CheckoutApiService {
       transID: string;
       ussdCode: string;
       redirectUrl: string;
-    }>('/transaction/checkout/card-init', data);
+    }>('/transaction/checkout/card-init', data, false, false);
   }
 
   async initiateTransferPayment(transID: string) {
@@ -97,23 +96,23 @@ class CheckoutApiService {
         accountNumber: string;
         bankName: string;
       };
-    }>('/transaction/checkout/bank-transfer', { transID });
+    }>('/transaction/checkout/bank-transfer', { transID }, false, false);
   }
 
   async checkUssdStatus(transID: string) {
-    return RequestService.post<CheckStatusI>('/transaction/checkout/ussd-verify', { transID });
+    return RequestService.post<CheckStatusI>('/transaction/checkout/ussd-verify', { transID }, false, false);
   }
 
   async checkTransferStatus(transID: string) {
-    return RequestService.post<CheckStatusI>('/transaction/checkout/bank-transfer-verify', { transID });
+    return RequestService.post<CheckStatusI>('/transaction/checkout/bank-transfer-verify', { transID }, false, false);
   }
 
   async checkCard3dsStatus(payload: { transID: string; otp: string }) {
-    return RequestService.post<CheckStatusI>('/transaction/checkout/card-3SD-verify', payload);
+    return RequestService.post<CheckStatusI>('/transaction/checkout/card-3SD-verify', payload, false, false);
   }
 
   async processChekoutDemo(data: ChekoutDemoPayloadI) {
-    return RequestService.post<ProcessChekoutDemoI>('/transaction/checkout/demo', data);
+    return RequestService.post<ProcessChekoutDemoI>('/transaction/checkout/demo', data, false, false);
   }
 }
 

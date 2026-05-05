@@ -193,14 +193,12 @@ const createInstance = (headers: Record<string, string>, withCredentials = true)
 
 const publicHeaders = (file?: 'file' | 'json'): Record<string, string> => ({
   Accept: 'application/json',
-  "User-Agent": "Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
   'Content-Type': file === 'file' ? 'multipart/form-data' : 'application/json',
 });
 
 const authHeaders = async (file?: 'file' | 'json'): Promise<Record<string, string>> => {
   const headers: Record<string, string> = {
     Accept: 'application/json',
-    "User-Agent": "Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
     'Content-Type': file === 'file' ? 'multipart/form-data' : 'application/json',
   };
   const activeOrgId = localStorage.getItem('active_org_id');
@@ -229,14 +227,14 @@ export class RequestService {
       .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(String(v))}`)
       .join('&');
 
-  static async get<T = unknown>(url: string, params?: object): Promise<ApiResponse<T>> {
+  static async get<T = unknown>(url: string, params?: object, withCredentials = false): Promise<ApiResponse<T>> {
     if (params) {
       const qs = RequestService.constructQueryString(params as Record<string, unknown>);
       if (qs) url = `${url}?${qs}`;
     }
     validateUrl(url);
     try {
-      const instance = createInstance(await authHeaders());
+      const instance = createInstance(await authHeaders(), withCredentials);
       const t = performance.now();
       const res = await instance.get<ApiResponse<T>>(url);
       logger.performance(`GET ${url}`, performance.now() - t);
@@ -246,7 +244,7 @@ export class RequestService {
     }
   }
 
-  static async post<T = unknown>(url: string, data: any, useAuth = true, withCredentials = true): Promise<ApiResponse<T>> {
+  static async post<T = unknown>(url: string, data: any, useAuth = false, withCredentials = false): Promise<ApiResponse<T>> {
     validateUrl(url);
     try {
       const headers = useAuth ? await authHeaders() : publicHeaders();
@@ -273,7 +271,7 @@ export class RequestService {
     }
   }
 
-  static async patch<T = unknown>(url: string, data: Record<string, unknown>, withCredentials = true, skipAuthErrorHandler = false): Promise<ApiResponse<T>> {
+  static async patch<T = unknown>(url: string, data: Record<string, unknown>, withCredentials = false, skipAuthErrorHandler = false): Promise<ApiResponse<T>> {
     validateUrl(url);
     try {
       const instance = createInstance(await authHeaders(), withCredentials);
