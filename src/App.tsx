@@ -41,11 +41,21 @@ function App() {
                         </LazyRoute>
                       }
                     />
+
                     <Route
                       path='/status/:ref'
                       element={
                         <LazyRoute>
                           <StatusPage />
+                        </LazyRoute>
+                      }
+                    />
+
+                    <Route
+                      path='/link/:slug'
+                      element={
+                        <LazyRoute>
+                          <Checkout />
                         </LazyRoute>
                       }
                     />

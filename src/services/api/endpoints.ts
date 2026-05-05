@@ -8,17 +8,17 @@ export const AuthEndpoints = {
   verifyPhone: '/api/v2/admin/verify',
   verifyPortalId: '/api/v2/admin/verify-portal',
   resendPhoneOTP: '/api/v2/admin/resend-otp',
-  
+
   forgotPassword: '/api/v2/admin/forgot-password',
   resetPassword: '/api/v2/admin/reset-password',
-  
+
   setPassPin: '/api/v2/admin/pass-pin',
   forgetPin: '/api/v2/admin/forget-pin',
   resetPin: '/api/v2/admin/reset-pin',
-  
+
   logout: '/api/v2/admin/logout',
   switchOrganization: '/api/v2/admin/switch-acc',
-  
+
   createAdmin: '/api/v2/admin/create',
   getAdmins: '/api/v2/admin/all',
   addAdminToOrg: '/api/v2/admin/add-admin-org',
@@ -31,20 +31,20 @@ export const AuthEndpoints = {
 export const OrganizationEndpoints = {
   registerSchool: '/api/v2/org/registration',
   registerOrganizationFromDashboard: '/api/v2/org/registration-dash',
-  
+
   getAllOrganizations: '/api/v2/org/all',
   getOrganizationProfile: '/api/v2/org/profile',
   getDashboard: '/api/v2/org/dashboard',
-  
+
   updateOrganization: (id: string) => `/api/v2/org/admin/edit/${id}`,
   updateOrganizationProfile: '/api/v2/org/edit',
   activateOrganization: '/api/v2/org/activate',
   addBankDetails: '/api/v2/org/bank',
   updateKycDocuments: '/api/v2/org/kyc',
   deleteOrganization: (id: string) => `/api/v2/org/delete/${id}`,
-  
+
   getActivity: '/api/v2/org/activity',
-  
+
   getAllSessions: '/api/v2/session/all',
   startSession: (id: string) => `/api/v2/session/start/${id}`,
 };
@@ -66,7 +66,7 @@ export const StudentEndpoints = {
 export const ClassEndpoints = {
   getAllClasses: '/api/v2/class/all',
   updateClass: (id: string) => `/api/v2/class/edit/${id}`,
-  
+
   createSubClass: '/api/v2/class/subclass/create',
   getAllSubClasses: '/api/v2/class/all-subclass',
   getAssignedSubClasses: (classId: string) => `/api/v2/class/assigned-subclass/${classId}`,
@@ -78,21 +78,16 @@ export const ClassEndpoints = {
 
 // Payment Endpoints
 export const PaymentEndpoints = {
-  getPaymentGateways: '/api/v2/payment/payment-gateways',
-  simulateTransfer: '/api/v2/payment/simulate-transfer',
-  getTransfersNew: (format: 'json' | 'file-export' = 'json') => `/api/v2/payment/transfers-new/${format}`,
-  getPricing: (organizationId?: string) => 
-    organizationId 
-      ? `/api/v2/payment/pricing?organization=${organizationId}`
-      : '/api/v2/payment/pricing',
-  updatePricing: (organizationId?: string) => 
-    organizationId 
-      ? `/api/v2/payment/pricing?organization=${organizationId}`
-      : '/api/v2/payment/pricing',
-  getProfitSharingAccounts: '/api/v2/payment/profit-sharing-accounts',
-  addProfitSharingAccount: '/api/v2/payment/profit-sharing-accounts',
-  updateProfitSharingAccount: (id: string) => `/api/v2/payment/profit-sharing-accounts/${id}`,
-  deleteProfitSharingAccount: (id: string) => `/api/v2/payment/profit-sharing-accounts/${id}`,
+  createPaymentLink: '/pay/create-payment-link',
+  getAllPaymentLinks: '/pay/all-payment-links',
+  deletePaymentLink: (id: string) => `/pay/delete-payment-link/${id}`,
+  cancelPaymentLink: (id: string) => `/pay/cancel-payment-link/${id}`,
+  getPaymentLinkDetails: (paymentLinkId: string) =>
+    `/pay/payment-links-details/${paymentLinkId}`,
+  initiatePayment: (slug: string) =>
+    `/transaction/init-payment-link/${slug}`,
+  getPublicLink: (slug: string) =>
+    `/pay/payment-link/${slug}`,
 };
 
 // Config Endpoints
@@ -145,3 +140,4 @@ export const AutheEndpoints = {
   loginStepOne: AuthEndpoints.loginStepOne,
   loginStepTwo: AuthEndpoints.loginStepTwo,
 };
+
