@@ -193,12 +193,14 @@ const createInstance = (headers: Record<string, string>, withCredentials = true)
 
 const publicHeaders = (file?: 'file' | 'json'): Record<string, string> => ({
   Accept: 'application/json',
+  "User-Agent": "Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
   'Content-Type': file === 'file' ? 'multipart/form-data' : 'application/json',
 });
 
 const authHeaders = async (file?: 'file' | 'json'): Promise<Record<string, string>> => {
   const headers: Record<string, string> = {
     Accept: 'application/json',
+    "User-Agent": "Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
     'Content-Type': file === 'file' ? 'multipart/form-data' : 'application/json',
   };
   const activeOrgId = localStorage.getItem('active_org_id');
