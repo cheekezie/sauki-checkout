@@ -13,6 +13,7 @@ import { AlertBridge } from './utils/alert-bridge';
 const Checkout = React.lazy(() => import('./features/checkout'));
 const StatusPage = React.lazy(() => import('./features/checkout/components/StatusPage'));
 
+const PaymentLink = React.lazy(() => import('./features/payment-link'));
 const NotFound = React.lazy(() => import('./features/NotFound'));
 
 // Add these imports at the top with other lazy imports
@@ -55,7 +56,7 @@ function App() {
                       path='/link/:slug'
                       element={
                         <LazyRoute>
-                          <Checkout />
+                          <PaymentLink />
                         </LazyRoute>
                       }
                     />
