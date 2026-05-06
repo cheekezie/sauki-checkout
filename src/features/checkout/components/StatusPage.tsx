@@ -1,6 +1,7 @@
 import { LogoIcon } from '@/assets';
 import { formatCurrencyWithSymbol } from '@/utils/formatCurrency';
 import { motion } from 'framer-motion';
+import jsPDF from 'jspdf';
 import { CheckCircle2, Download, ExternalLink, LockKeyholeIcon, XCircle } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -45,59 +46,68 @@ export default function StatusPage() {
     };
   }, [hasRedirect]);
 
-  const downloadInvoice = () => {
-    const win = window.open('', '_blank');
-    if (!win) return;
+  const downloadReceipt = () => {
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const W = doc.internal.pageSize.getWidth();
+    const date = new Date().toLocaleString('en-NG', { dateStyle: 'long', timeStyle: 'short' });
 
-    const date = new Date().toLocaleString('en-NG', {
-      dateStyle: 'long',
-      timeStyle: 'short',
+    // Header band
+    doc.setFillColor(20, 64, 73); // secondary
+    doc.rect(0, 0, W, 72, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(20);
+    doc.setTextColor(255, 212, 125); // primary
+    doc.text('SaukiPay', W / 2, 44, { align: 'center' });
+
+    // Title
+    doc.setTextColor(30, 30, 30);
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Payment Receipt', W / 2, 112, { align: 'center' });
+
+    // Status badge background
+    doc.setFillColor(209, 250, 229);
+    doc.roundedRect(W / 2 - 64, 124, 128, 24, 12, 12, 'F');
+    doc.setFontSize(10);
+    doc.setTextColor(6, 95, 70);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Payment Successful', W / 2, 140, { align: 'center' });
+
+    // Divider
+    doc.setDrawColor(229, 231, 235);
+    doc.setLineWidth(1);
+    doc.line(48, 168, W - 48, 168);
+
+    // Rows
+    const rows: [string, string][] = [];
+    if (state?.merchant) rows.push(['Merchant', state.merchant]);
+    if (state?.customer) rows.push(['Customer', state.customer]);
+    if (state?.amount !== undefined) rows.push(['Amount Paid', formatCurrencyWithSymbol(state.amount)]);
+    rows.push(['Date', date]);
+    rows.push(['Status', 'Successful']);
+
+    let y = 196;
+    rows.forEach(([label, value]) => {
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(120, 120, 120);
+      doc.text(label, 48, y);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(20, 20, 20);
+      doc.text(value, W - 48, y, { align: 'right' });
+      doc.setDrawColor(243, 244, 246);
+      doc.line(48, y + 10, W - 48, y + 10);
+      y += 36;
     });
 
-    win.document.write(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Payment Receipt – Saukipay</title>
-          <style>
-            * { margin: 0; padding: 0; box-sizing: border-box; }
-            body { font-family: 'Segoe UI', Arial, sans-serif; padding: 48px; color: #1a1a1a; }
-            .header { text-align: center; margin-bottom: 40px; }
-            .header h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
-            .header p { color: #6b7280; font-size: 13px; }
-            .badge { display: inline-block; background: #d1fae5; color: #065f46; font-size: 12px;
-                     font-weight: 600; padding: 4px 14px; border-radius: 999px; margin-bottom: 24px; }
-            table { width: 100%; border-collapse: collapse; margin-top: 16px; }
-            td { padding: 12px 0; border-bottom: 1px solid #f3f4f6; font-size: 14px; }
-            td:last-child { text-align: right; font-weight: 600; }
-            .total td { font-size: 16px; font-weight: 700; border-bottom: none; padding-top: 20px; }
-            .footer { margin-top: 48px; text-align: center; color: #9ca3af; font-size: 12px; }
-            @media print { body { padding: 32px; } }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <h1>Payment Receipt</h1>
-            <p>Secured by Saukipay</p>
-          </div>
-          <div style="text-align:center">
-            <span class="badge">✓ Payment Successful</span>
-          </div>
-          <table>
-            ${state?.merchant ? `<tr><td>Merchant</td><td>${state.merchant}</td></tr>` : ''}
-            ${state?.amount !== undefined ? `<tr><td>Amount Paid</td><td>${formatCurrencyWithSymbol(state.amount)}</td></tr>` : ''}
-            <tr><td>Date</td><td>${date}</td></tr>
-            <tr><td>Status</td><td>Successful</td></tr>
-          </table>
-          <div class="footer">
-            <p>This is an automatically generated receipt. Please keep it for your records.</p>
-            <p style="margin-top:8px">saukipay.net</p>
-          </div>
-          <script>window.onload = () => { window.print(); }<\/script>
-        </body>
-      </html>
-    `);
-    win.document.close();
+    // Footer
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(156, 163, 175);
+    doc.text('This is an automatically generated receipt. Please keep it for your records.', W / 2, y + 40, { align: 'center' });
+    doc.text('saukipay.net', W / 2, y + 56, { align: 'center' });
+
+    doc.save(`saukipay-receipt-${Date.now()}.pdf`);
   };
 
   const progress = hasRedirect ? ((REDIRECT_DELAY - countdown) / REDIRECT_DELAY) * CIRCUMFERENCE : 0;
@@ -210,11 +220,11 @@ export default function StatusPage() {
                 <div className='space-y-3'>
                   {isSuccess && (
                     <button
-                      onClick={downloadInvoice}
+                      onClick={downloadReceipt}
                       className='w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-secondary text-white text-sm font-semibold hover:bg-secondary/90 transition-colors'
                     >
                       <Download className='w-4 h-4' />
-                      Download Invoice
+                      Download Receipt
                     </button>
                   )}
                   <button
