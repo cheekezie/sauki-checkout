@@ -17,11 +17,6 @@ export const useInitiatePayment = () => {
   return useMutation({
     mutationFn: ({ slug, payload }: { slug: string; payload: any }) => api.initiatePayment(slug, payload),
     meta: { toastError: false },
-    onSuccess: (res) => {
-      const { checkout, accessCode } = res.data.checkoutData;
-      const url = `${window.location.origin}/${accessCode}`;
-      window.open(url, '_blank');
-    },
 
     onError: (err) => {
       notify.modal({

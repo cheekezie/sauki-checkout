@@ -6,7 +6,7 @@ import { type PaymentLink } from './api';
 import { formatCurrencyWithSymbol } from '@/utils/formatCurrency';
 import { AlertCircle, Shield } from 'lucide-react';
 import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 // ─── Skeletons ────────────────────────────────────────────────────────────────
 const LeftSkeleton = () => (
@@ -114,6 +114,7 @@ const PayPage = () => {
 
   const { data: link, isLoading, error } = useGetPaymentLinkPublic(slug);
   const { mutate, isPending } = useInitiatePayment();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const label = link?.title || link?.description;
@@ -121,7 +122,12 @@ const PayPage = () => {
   }, [link]);
 
   const onSubmit = async (values: PayFormValues) => {
-    mutate({ slug, payload: values });
+    mutate({ slug, payload: values }, {
+      onSuccess: (res) => {
+        const { accessCode } = res.data.checkoutData;
+        navigate(`/${accessCode}`);
+      },
+    });
   };
 
   const isUnavailable = !isLoading && !error && !link;

@@ -107,6 +107,7 @@ const CardDetails = ({ amount, transactionId, merchant, customer, onBack }: prop
 
   const handleOtpSubmit = async () => {
     const res = await checkCard3ds({ transID: transactionId, otp: otp.join('') });
+
     const status = verify(res);
 
     if (status === 'pending') triggerPendingBanner();

@@ -96,9 +96,9 @@ export function usePaymentVerificationAlt(meta: VerificationMeta = {}) {
     const paramStatus = params?.status ?? '';
     const status = (res.data.paymentStatus ?? paramStatus ?? '').toLowerCase();
 
-    if (status === 'success') {
+    if (status.includes('success')) {
       const state: CheckoutStatusState = {
-        status: status,
+        status: 'success',
         amount: meta.amount,
         merchant: meta.merchant,
         customer: meta.customer,
